@@ -1,0 +1,14 @@
+services:
+
+  db:
+      image: mysql:8.0.31
+      container_name: proyecto-db
+      environment:
+      - MYSQL_DATABASE=proyecto
+      - MYSQL_USER=proyecto
+      - MYSQL_PASSWORD=secret
+      - MYSQL_ROOT_PASSWORD=secret
+      ports:
+      - '3306:3306'
+      expose:
+      - '3306'
