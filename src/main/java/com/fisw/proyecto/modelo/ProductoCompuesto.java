@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import lombok.Data;
 
 import java.util.List;
@@ -21,6 +22,10 @@ public class ProductoCompuesto {
     private String nombre;
     private double precioBase;
 
+    @ManyToOne
+    private Categoria categoria;
+    
     @ManyToMany(cascade = CascadeType.ALL)
     private List<Producto> subproductos;
+
 }

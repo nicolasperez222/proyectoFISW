@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import lombok.Data;
 
 @Entity
@@ -20,7 +21,11 @@ public class Producto {
     private String nombre;
     private Double precioCosto;
     private Double precioVenta;
+    
+    @ManyToOne
+    private Categoria categoria;
 
     @ManyToMany(mappedBy = "subproductos")
     private List<ProductoCompuesto> productosCompuestos;
+    
 }
