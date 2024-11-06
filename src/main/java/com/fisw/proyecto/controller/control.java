@@ -9,4 +9,8 @@ public class control {
     public String getMessage()  {
         return "Hola Mundo !!";
     }
+    @GetMapping("/hola")
+    public String adios(){
+        return "Adios!!";
+    }
 }
