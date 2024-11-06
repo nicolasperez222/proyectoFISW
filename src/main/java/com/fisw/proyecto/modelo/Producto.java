@@ -2,6 +2,7 @@ package com.fisw.proyecto.modelo;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Data;
 
@@ -10,7 +11,7 @@ import lombok.Data;
 public class Producto {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY) 
     Integer id;
 
     String nombre;

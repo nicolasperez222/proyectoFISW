@@ -7,5 +7,6 @@ import com.fisw.proyecto.modelo.Producto;
 
 @Repository
 public interface ProductoRepository extends JpaRepository<Producto, Integer> {
-    
+
 }
+
