@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/")
-public class ControllerPantallas {
+public class Pantallas {
 
 
     @GetMapping("/")
@@ -17,6 +17,7 @@ public class ControllerPantallas {
     public String crearProducto() {
         return "productos";
     }
+
 
 }
 

@@ -1,7 +1,5 @@
 mvn -DskipTests package spring-boot:run
 
-Guardar:
-
 git add .
 git commit -m "XX"
 git push -u origin main
