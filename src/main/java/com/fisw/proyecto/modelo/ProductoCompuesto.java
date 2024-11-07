@@ -26,6 +26,6 @@ public class ProductoCompuesto {
     private Categoria categoria;
     
     @ManyToMany(cascade = CascadeType.ALL)
-    private List<Producto> subproductos;
+    private List<Producto> subproductos = new ArrayList<>();;
 
 }
