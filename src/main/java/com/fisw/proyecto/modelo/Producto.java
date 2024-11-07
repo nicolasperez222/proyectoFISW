@@ -26,6 +26,6 @@ public class Producto {
     private Categoria categoria;
 
     @ManyToMany(mappedBy = "subproductos")
-    private List<ProductoCompuesto> productosCompuestos;
+    private List<ProductoCompuesto> productosCompuestos = new ArrayList<>();;
     
 }
