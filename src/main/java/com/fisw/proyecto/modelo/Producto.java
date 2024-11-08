@@ -1,5 +1,6 @@
 package com.fisw.proyecto.modelo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.Entity;
@@ -26,6 +27,6 @@ public class Producto {
     private Categoria categoria;
 
     @ManyToMany(mappedBy = "subproductos")
-    private List<ProductoCompuesto> productosCompuestos = new ArrayList<>();;
+    private List<ProductoCompuesto> productosCompuestos = new ArrayList();;
     
 }

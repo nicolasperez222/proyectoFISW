@@ -8,7 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
-
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -26,6 +26,6 @@ public class ProductoCompuesto {
     private Categoria categoria;
     
     @ManyToMany(cascade = CascadeType.ALL)
-    private List<Producto> subproductos = new ArrayList<>();;
+    private List<Producto> subproductos = new ArrayList<>();
 
 }
