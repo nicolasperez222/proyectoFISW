@@ -4,27 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Página de Inicio</title>
+    <title>Panel de Gestión de Productos</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
-<script src="/js/app.js"></script>
+<body>
     <div class="container">
         <header>
-            <h1>Inicio A </h1>
+            <h1>Bienvenido al Panel de Gestión de Productos</h1>
             <nav>
                 <ul>
-                    <button onclick="window.location.href='/producto/crear'">Crear Producto</button>
-
+                    <li><button onclick="window.location.href='/producto/crear'">Crear Producto</button></li>
+                    <li><button onclick="window.location.href='/categoria/crear'">Crear Categoría</button></li>
+                    <li><button onclick="window.location.href='/producto'">Ver Productos</button></li>
+                    <li><button onclick="window.location.href='/categoria'">Ver Categorías</button></li>
                 </ul>
             </nav>
         </header>
 
         <main>
             <section>
-                <h2>Gestiona tus productos fácilmente</h2>
-                <p>Utiliza esta plataforma para agregar, ver y gestionar tus productos.</p>
+                <h2>Gestiona tus productos y categorías fácilmente</h2>
+                <p>Utiliza esta plataforma para agregar, visualizar y gestionar tus productos y categorías de forma eficiente.</p>
             </section>
-            <br>
+
             <section>
                 <h2>Productos Disponibles</h2>
                 <table id="productos-table">
@@ -37,16 +39,18 @@
                         </tr>
                     </thead>
                     <tbody>
+                        
                     </tbody>
                 </table>
             </section>
             
         </main>
-        <br>
+
         <footer>
-            <p>&copy; 2024 Mi Página Web</p>
+            <p>&copy; 2024 Mi Página Web. Todos los derechos reservados.</p>
         </footer>
     </div>
-    
+
+    <script src="/js/app.js"></script>
 </body>
 </html>

@@ -14,21 +14,46 @@
         </div>
         
         <h1>Crear Producto</h1>
-        <form id="createProductForm">
-            <button>Producto Simple</button>
-            <br>
-            <button>Producto Compuesto</button><br>
-            <label for="nombre">Nombre del Producto</label>
-            <input type="text" id="nombre" name="nombre" required>
+        <div>
+            <button type="button" onclick="mostrarFormulario('simple')">Producto Simple</button>
+            <button type="button" onclick="mostrarFormulario('compuesto')">Producto Compuesto</button>
+        </div>
+        
+        <!-- Formulario para Producto Simple -->
+        <form id="createProductFormSimple" style="display:none;">
+            <h2>Producto Simple</h2>
+            <label for="nombreSimple">Nombre del Producto</label>
+            <input type="text" id="nombreSimple" name="nombreSimple" required>
 
-            <label for="precioCosto">Precio de Costo</label>
-            <input type="number" id="precioCosto" name="precioCosto" required>
+            <label for="precioCostoSimple">Precio de Costo</label>
+            <input type="number" id="precioCostoSimple" name="precioCostoSimple" required>
 
-            <label for="precioVenta">Precio de Venta</label>
-            <input type="number" id="precioVenta" name="precioVenta" required>
+            <label for="precioVentaSimple">Precio de Venta</label>
+            <input type="number" id="precioVentaSimple" name="precioVentaSimple" required>
 
-            <button type="submit">Crear Producto</button>
+            <button type="button" onclick="crearProductoSimple()">Crear Producto Simple</button>
         </form>
+        
+        <!-- Formulario para Producto Compuesto -->
+        <form id="createProductFormCompuesto" style="display:none;">
+            <h2>Producto Compuesto</h2>
+            <label for="nombreCompuesto">Nombre del Producto</label>
+            <input type="text" id="nombreCompuesto" name="nombreCompuesto" required>
+
+            <label for="precioBase">Precio Base</label>
+            <input type="number" id="precioBase" name="precioBase" required>
+
+            <label for="categoriaIdCompuesto">ID de Categoría</label>
+            <input type="number" id="categoriaIdCompuesto" name="categoriaIdCompuesto" required>
+
+            <div id="subproductosContainer">
+                <h3>Subproductos</h3>
+                <button type="button" onclick="agregarSubproducto()">Agregar Subproducto</button>
+            </div>
+            
+            <button type="button" onclick="crearProductoCompuesto()">Crear Producto Compuesto</button>
+        </form>
+        
         <p id="responseMessage"></p>
     </div>
 

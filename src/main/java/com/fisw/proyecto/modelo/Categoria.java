@@ -9,10 +9,11 @@ import lombok.Data;
 @Entity
 @Data
 public class Categoria {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String descripcion;
-
+    private String nombre;
 }
+

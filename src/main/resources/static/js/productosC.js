@@ -1,38 +1,74 @@
-document.getElementById('createProductForm').addEventListener('submit', function(event) {
-    event.preventDefault();
+// Mostrar el formulario correspondiente
+function mostrarFormulario(tipo) {
+    document.getElementById('createProductFormSimple').style.display = tipo === 'simple' ? 'block' : 'none';
+    document.getElementById('createProductFormCompuesto').style.display = tipo === 'compuesto' ? 'block' : 'none';
+    document.getElementById('responseMessage').innerText = "";
+}
 
-    const nombre = document.getElementById('nombre').value;
-    const precioCosto = document.getElementById('precioCosto').value;
-    const precioVenta = document.getElementById('precioVenta').value;
+// Crear Producto Simple
+async function crearProductoSimple() {
+    const nombre = document.getElementById('nombreSimple').value;
+    const precioCosto = document.getElementById('precioCostoSimple').value;
+    const precioVenta = document.getElementById('precioVentaSimple').value;
 
-    const producto = {
-        nombre: nombre,
-        precioCosto: parseFloat(precioCosto),
-        precioVenta: parseFloat(precioVenta)
-    };
-
-    fetch('/producto/', {
+    const response = await fetch('/producto/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(producto)
-    })
-    .then(response => response.json())
-    .then(data => {
-        document.getElementById('responseMessage').innerText = 'Producto creado con éxito';
-        document.getElementById('createProductForm').reset();
-        setTimeout(() => {
-            document.getElementById('responseMessage').innerText = '';
-        }, 3000); 
-    })
-    .catch(error => {
-
-        console.error('Error al crear el producto:', error);
-        document.getElementById('responseMessage').innerText = 'Error al crear el producto';
-
-        setTimeout(() => {
-            document.getElementById('responseMessage').innerText = '';
-        }, 3000);
+        body: JSON.stringify({
+            nombre,
+            precioCosto,
+            precioVenta
+        })
     });
-});
+    const data = await response.json();
+    document.getElementById('responseMessage').innerText = response.ok ? 
+        `Producto simple creado con ID: ${data.id}` : 'Error al crear el producto simple.';
+}
+
+// Crear Producto Compuesto
+async function crearProductoCompuesto() {
+    const nombre = document.getElementById('nombreCompuesto').value;
+    const precioBase = document.getElementById('precioBase').value;
+    const categoriaId = document.getElementById('categoriaIdCompuesto').value;
+    
+    const subproductos = [];
+    document.querySelectorAll('.subproducto').forEach(row => {
+        const id = row.querySelector('.subproductoId').value;
+        const cantidad = row.querySelector('.subproductoCantidad').value;
+        subproductos.push({ id, cantidad });
+    });
+
+    const response = await fetch('/producto-compuesto', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            nombre,
+            precioBase,
+            categoriaId,
+            subproductos
+        })
+    });
+    const data = await response.json();
+    document.getElementById('responseMessage').innerText = response.ok ? 
+        `Producto compuesto creado con ID: ${data.id}` : 'Error al crear el producto compuesto.';
+}
+
+// Agregar campos de subproducto
+function agregarSubproducto() {
+    const subproductosContainer = document.getElementById('subproductosContainer');
+    const subproductoRow = document.createElement('div');
+    subproductoRow.classList.add('subproducto');
+    
+    subproductoRow.innerHTML = `
+        <label>ID Subproducto: </label>
+        <input type="number" class="subproductoId" required>
+        <label>Cantidad: </label>
+        <input type="number" class="subproductoCantidad" required>
+    `;
+    
+    subproductosContainer.appendChild(subproductoRow);
+}

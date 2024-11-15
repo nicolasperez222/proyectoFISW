@@ -1,3 +1,5 @@
+
+
 document.addEventListener('DOMContentLoaded', function() {
     fetch('/producto/')
         .then(response => response.json())
@@ -7,7 +9,6 @@ document.addEventListener('DOMContentLoaded', function() {
             
             data.forEach(producto => {
                 const row = document.createElement('tr');
-                
                 row.innerHTML = `
                     <td>${producto.id}</td>
                     <td>${producto.nombre}</td>
@@ -20,3 +21,5 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch(error => console.error('Error al cargar los productos:', error));
 });
+
+

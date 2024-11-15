@@ -10,13 +10,19 @@ public class Pantallas {
 
 
     @GetMapping("/")
-    public String hola() {
+    public String inicio() {
         return "index";
     }
+
     @GetMapping("producto/crear")
     public String crearProducto() {
         return "productos";
     }
+    @GetMapping("categoria/crear")
+    public String crearCategoria() {
+        return "categoria";
+    }
+
 
 
 }

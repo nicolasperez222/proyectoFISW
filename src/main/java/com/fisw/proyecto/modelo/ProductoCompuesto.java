@@ -1,12 +1,6 @@
 package com.fisw.proyecto.modelo;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.Data;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +18,9 @@ public class ProductoCompuesto {
 
     @ManyToOne
     private Categoria categoria;
-    
-    @ManyToMany(cascade = CascadeType.ALL)
-    private List<Producto> subproductos = new ArrayList<>();
 
+    @OneToMany(mappedBy = "productoCompuesto", cascade = CascadeType.ALL)
+    private List<ProductoCompuestoSubproducto> subproductos = new ArrayList<>();
 }
+
+

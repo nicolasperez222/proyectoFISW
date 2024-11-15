@@ -7,5 +7,4 @@ import com.fisw.proyecto.modelo.Categoria;
 @Repository
 public interface CategoriaRepository extends JpaRepository<Categoria, Integer>{
     
-
 }

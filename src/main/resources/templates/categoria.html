@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Crear Categoría</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <button onclick="window.location.href='/'">Volver</button>
+        <h1>Crear Categoría</h1>
+        <form id="createCategoryForm">
+            <label for="nombre">Nombre de la Categoría</label>
+            <input type="text" id="nombre" name="nombre" required>
+            <button type="submit" id="submitButton">Crear Categoría</button>
+            <button type="button" id="cancelButton" style="display: none;">Cancelar</button>
+        </form>
+        <p id="responseMessage"></p>
+    </div>
+
+    <section class="table-container">
+        <h2>Categorías</h2>
+        <table id="categorias-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+            </tbody>
+        </table>
+    </section>
+
+    <script src="/js/categoria.js"></script>
+</body>
+</html>
