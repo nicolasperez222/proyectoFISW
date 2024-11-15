@@ -82,20 +82,36 @@ function cargarCategorias() {
 
 // Función para eliminar una categoría
 function eliminarCategoria(id) {
-    fetch(`/categoria/${id}`, {
-        method: 'DELETE',
-    })
-    .then(response => {
-        if (response.ok) {
-            document.getElementById("responseMessage").textContent = "Categoría eliminada con éxito.";
-            document.getElementById("responseMessage").style.color = "green";
-            cargarCategorias();
-        } else {
-            document.getElementById("responseMessage").textContent = "Error al eliminar la categoría.";
-            document.getElementById("responseMessage").style.color = "red";
-        }
-    })
-    .catch(error => console.error('Error al eliminar la categoría:', error));
+    if (categoriaEditadaId !== null) {
+        cancelarEdicion();
+    }
+
+    // Confirmación antes de eliminar la categoría
+    if (confirm("¿Estás seguro de que deseas eliminar esta categoría?")) {
+        fetch(`/categoria/${id}`, {
+            method: 'DELETE',
+        })
+        .then(response => {
+            if (response.ok) {
+                document.getElementById("responseMessage").textContent = "Categoría eliminada con éxito.";
+                document.getElementById("responseMessage").style.color = "green";
+                cargarCategorias(); 
+            } else {
+                document.getElementById("responseMessage").textContent = "Error al eliminar la categoría.";
+                document.getElementById("responseMessage").style.color = "red";
+            }
+        })
+        .catch(error => console.error('Error al eliminar la categoría:', error));
+    }
+}
+
+// Función para cancelar la edición
+function cancelarEdicion() {
+    document.getElementById("createCategoryForm").reset();
+    document.getElementById("responseMessage").textContent = "";
+    document.getElementById("submitButton").textContent = "Crear Categoría";
+    document.getElementById("cancelButton").style.display = "none";
+    categoriaEditadaId = null; // Restablecer la categoría editada
 }
 
 // Función para editar una categoría
@@ -107,14 +123,9 @@ function editarCategoria(id, nombre) {
     document.getElementById("submitButton").textContent = "Actualizar Categoría";
     document.getElementById("cancelButton").style.display = "inline-block";
     document.getElementById("nombre").focus();
-    
 }
 
 // Función para cancelar la edición
 document.getElementById("cancelButton").addEventListener("click", function() {
-    document.getElementById("createCategoryForm").reset();
-    document.getElementById("responseMessage").textContent = "";
-    document.getElementById("submitButton").textContent = "Crear Categoría";
-    document.getElementById("cancelButton").style.display = "none";
-    categoriaEditadaId = null;
+    cancelarEdicion();
 });

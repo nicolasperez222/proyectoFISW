@@ -18,6 +18,7 @@ public class Producto {
     private Double precioVenta;
 
     @ManyToOne
+    @JoinColumn(name = "categoria_id", nullable = true)
     private Categoria categoria;
 
     @OneToMany(mappedBy = "subproducto")

@@ -31,6 +31,11 @@
             <label for="precioVentaSimple">Precio de Venta</label>
             <input type="number" id="precioVentaSimple" name="precioVentaSimple" required>
 
+            <label for="categoriaSimple">Departamento</label>
+            <select id="categoriaSimple" name="categoriaSimple">
+                <option value="">Seleccione un departamento</option>
+            </select>
+
             <button type="button" onclick="crearProductoSimple()">Crear Producto Simple</button>
         </form>
         
@@ -43,8 +48,10 @@
             <label for="precioBase">Precio Base</label>
             <input type="number" id="precioBase" name="precioBase" required>
 
-            <label for="categoriaIdCompuesto">ID de Categoría</label>
-            <input type="number" id="categoriaIdCompuesto" name="categoriaIdCompuesto" required>
+            <label for="categoriaCompuesto">Departamento</label>
+            <select id="categoriaCompuesto" name="categoriaCompuesto">
+                <option value="">Seleccione un departamento</option>
+            </select>
 
             <div id="subproductosContainer">
                 <h3>Subproductos</h3>

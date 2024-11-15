@@ -128,3 +128,40 @@ tbody tr:hover {
     background-color: #D5DBDB;
     cursor: pointer;
 }
+
+/* General */
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Formularios */
+form {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input, select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+}
+
+/* Subproductos */
+#subproductosContainer {
+    margin-top: 20px;
+}
+
+.subproducto {
+    margin-bottom: 10px;
+}

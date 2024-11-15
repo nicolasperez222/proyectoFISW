@@ -25,13 +25,20 @@ public class ProductoController {
     }
 
     @PostMapping("/")
-    public Producto crearProducto(@RequestBody Producto producto, @RequestParam Integer categoriaId) {
-        Categoria categoria = categoriaRepository.findById(categoriaId)
-                .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
+    public Producto crearProducto(@RequestBody Producto producto, @RequestParam(required = false) Integer categoriaId) {
+        Categoria categoria = null;
+        
+        if (categoriaId != null) {
+            categoria = categoriaRepository.findById(categoriaId)
+                    .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
+        }
+        
         producto.setCategoria(categoria);
         return productoRepository.save(producto);
     }
 
+
+    
 
     @GetMapping("/")
     public Iterable<Producto> getProductos() {
