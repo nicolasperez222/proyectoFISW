@@ -7,8 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/")
 public class Pantallas {
-
-
+    
     @GetMapping("/")
     public String inicio() {
         return "index";
@@ -22,8 +21,4 @@ public class Pantallas {
     public String crearCategoria() {
         return "categoria";
     }
-
-
-
 }
-
