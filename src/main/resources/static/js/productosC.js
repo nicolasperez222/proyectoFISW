@@ -86,7 +86,7 @@ async function crearProductoCompuesto() {
     });
 
     try {
-        const response = await fetch('/producto-compuesto', {
+        const response = await fetch('/producto-compuesto/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
