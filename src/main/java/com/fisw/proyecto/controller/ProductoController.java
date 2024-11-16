@@ -36,10 +36,7 @@ public class ProductoController {
         producto.setCategoria(categoria);
         return productoRepository.save(producto);
     }
-
-
     
-
     @GetMapping("/")
     public Iterable<Producto> getProductos() {
         return productoRepository.findAll();
