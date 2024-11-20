@@ -81,45 +81,6 @@ async function crearProductoSimple() {
     }
 }
 
-
-// Crear Producto Compuesto
-async function crearProductoCompuesto() {
-    const nombre = document.getElementById('nombreCompuesto').value;
-    const precioBase = document.getElementById('precioBase').value;
-    const categoriaId = document.getElementById('categoriaCompuesto').value;
-    const categoriaParam = categoriaId ? categoriaId : null; 
-
-    const subproductos = [];
-    document.querySelectorAll('.subproducto').forEach(row => {
-        const id = row.querySelector('.subproductoId').value;
-        const cantidad = row.querySelector('.subproductoCantidad').value;
-        subproductos.push({ id, cantidad });
-    });
-
-    try {
-        const response = await fetch('/producto-compuesto/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                nombre,
-                precioBase,
-                categoriaId: categoriaParam,
-                departamentoId,
-                subproductos
-            })
-        });
-        
-        const data = await response.json();
-        document.getElementById('responseMessage').innerText = response.ok ? 
-            `Producto compuesto creado con ID: ${data.id}` : 'Error al crear el producto compuesto.';
-    } catch (error) {
-        console.error('Error al crear el producto compuesto:', error);
-        document.getElementById('responseMessage').innerText = 'Error al crear el producto compuesto.';
-    }
-}
-
 // Función para seleccionar un producto desde la tabla de búsqueda
 function seleccionarProducto(id, nombre, precioCosto, precioVenta, categoriaId) {
     document.getElementById('nombreSimple').value = nombre;
@@ -322,13 +283,10 @@ async function actualizarProducto() {
 
 // Función para cancelar la edición del producto
 function cancelarEdicion() {
-    // Limpiar los campos del formulario
     document.getElementById('createProductFormSimple').reset();
 
-    // Ocultar la sección de actualizar y mostrar el botón de crear
     document.getElementById('modificar').style.display = 'none';
 
-    // Eliminar el ID del producto seleccionado
     delete document.getElementById('createProductFormSimple').dataset.productId;
     document.getElementById('crearSimple').style.display = 'inline-block';
 
@@ -337,31 +295,30 @@ function cancelarEdicion() {
 function mostrarMensaje(mensaje, tipo) {
     const responseMessageElement = document.getElementById('responseMessage');
     responseMessageElement.innerText = mensaje;
-    responseMessageElement.classList.remove('success', 'error'); // Eliminar clases previas
-    responseMessageElement.classList.add(tipo); // Agregar clase según el tipo (success o error)
+    responseMessageElement.classList.remove('success', 'error');
+    responseMessageElement.classList.add(tipo);
 
-    responseMessageElement.style.display = 'block'; // Mostrar el mensaje
+    responseMessageElement.style.display = 'block';
     setTimeout(() => {
-        responseMessageElement.style.opacity = '0'; // Desvanecer el mensaje
+        responseMessageElement.style.opacity = '0';
         setTimeout(() => {
-            responseMessageElement.style.display = 'none'; // Ocultar el mensaje completamente después de la transición
-            responseMessageElement.style.opacity = '1'; // Resetear la opacidad para la próxima vez
-        }, 500); // Espera a que termine la animación de desvanecimiento
-    }, 3000); // El mensaje permanecerá visible durante 3 segundos
+            responseMessageElement.style.display = 'none'; 
+            responseMessageElement.style.opacity = '1'; 
+        }, 500);
+    }, 3000);
 }
 
 
 
 //PRODUCTO COMPUESTO
 
-let subproductosSeleccionados = [];  // Array para almacenar los subproductos seleccionados
-let subproductoEditando = null;      // Variable para almacenar el subproducto que se está editando
+let subproductosSeleccionados = []; 
+let subproductoEditando = null;     
 
 function mostrarFormularioSubproducto() {
-    // Mostrar el formulario para agregar subproducto
     document.getElementById('formSubproducto').style.display = 'block';
-    subproductoEditando = null; // Asegura que no haya un subproducto siendo editado
-    document.getElementById('cantidadSubproducto').value = 1; // Restablecer cantidad
+    subproductoEditando = null; 
+    document.getElementById('cantidadSubproducto').value = 1;
 }
 
 function cancelarAgregarSubproducto() {
@@ -374,6 +331,7 @@ function cancelarAgregarSubproducto() {
 async function buscarSubproductoPorNombre() {
     const query = document.getElementById('buscarSubproducto').value;
 
+    // Verificar que el usuario haya ingresado al menos 3 caracteres
     if (query.length < 3) {
         document.getElementById('resultadosBusqueda').style.display = 'none';
         return;
@@ -385,22 +343,27 @@ async function buscarSubproductoPorNombre() {
 
         // Mostrar los resultados de la búsqueda de subproductos
         const listaResultados = document.getElementById('resultadosBusqueda');
-        listaResultados.innerHTML = '';  // Limpiar resultados anteriores
+        listaResultados.innerHTML = ''; // Limpiar resultados anteriores
 
         productos.forEach(producto => {
             const item = document.createElement('li');
             item.textContent = producto.nombre;
-            item.setAttribute('data-id', producto.id);
-            item.onclick = () => seleccionarSubproducto(producto);
+            item.setAttribute('data-id', producto.id); 
+            item.style.cursor = 'pointer';
+            item.onclick = () => {
+                document.getElementById('buscarSubproducto').value = producto.nombre;
+                document.getElementById('buscarSubproducto').dataset.id = producto.id;
+                listaResultados.style.display = 'none'; 
+            };
             listaResultados.appendChild(item);
         });
 
-        // Mostrar los resultados solo si hay al menos uno
         listaResultados.style.display = productos.length > 0 ? 'block' : 'none';
     } catch (error) {
         console.error('Error al buscar subproductos:', error);
     }
 }
+
 
 function seleccionarSubproducto(producto) {
     const cantidad = document.getElementById('cantidadSubproducto').value;
@@ -458,44 +421,57 @@ function eliminarSubproducto(index) {
 }
 
 async function crearProductoCompuesto() {
+    // Obtener valores del formulario
     const nombre = document.getElementById('nombreCompuesto').value;
-    const precioBase = document.getElementById('precioBase').value;
+    const precioBase = parseFloat(document.getElementById('precioBase').value);
     const categoriaId = document.getElementById('categoriaCompuesto').value;
+    
+    // Subproductos seleccionados
+    const subproductos = subproductosSeleccionados.map(subproducto => ({
+        subproducto: { id: subproducto.id },
+        cantidad: subproducto.cantidad
+    }));
 
-    // Crear el objeto del producto compuesto
+    // Validar que haya subproductos
+    if (subproductos.length === 0) {
+        mostrarMensaje('Debes agregar al menos un subproducto.', 'error');
+        return;
+    }
+
+    // Crear el objeto a enviar
     const productoCompuesto = {
         nombre,
         precioBase,
-        categoriaId,
-        subproductos: subproductosSeleccionados
+        categoria: categoriaId ? { id: parseInt(categoriaId) } : null,
+        subproductos
     };
 
     try {
-        const response = await fetch('/producto/compuesto', {
+        
+        const response = await fetch('/producto-compuesto/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(productoCompuesto)
         });
+        
 
+        // Verificar la respuesta
         if (response.ok) {
-            document.getElementById('responseMessage').innerText = 'Producto compuesto creado con éxito';
+            const data = await response.json();
+            mostrarMensaje(`Producto compuesto creado con éxito. ID: ${data.id}`, 'success');
+            limpiarFormularioProductoCompuesto();
         } else {
-            document.getElementById('responseMessage').innerText = 'Error al crear el producto compuesto';
+            const errorText = await response.text();
+            mostrarMensaje(`Error al crear el producto compuesto: ${errorText}`, 'error');
         }
     } catch (error) {
-        console.error('Error al crear producto compuesto:', error);
-        document.getElementById('responseMessage').innerText = 'Error al crear el producto compuesto';
+        console.error('Error al crear el producto compuesto:', error);
+        mostrarMensaje('Error al conectar con el servidor.', 'error');
     }
-
-    // Limpiar el formulario
-    document.getElementById('createProductFormCompuesto').reset();
-    document.getElementById('subproductosContainer').innerHTML = '';
-    subproductosSeleccionados = [];  // Limpiar la lista de subproductos seleccionados
-    document.getElementById('responseMessage').style.display = 'block';
-    setTimeout(() => document.getElementById('responseMessage').style.display = 'none', 3000);
 }
+
 
 
 

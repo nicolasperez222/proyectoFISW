@@ -1,90 +1,82 @@
 package com.fisw.proyecto.controller;
 
-import org.springframework.web.bind.annotation.*;
-import org.springframework.http.HttpStatus;
-
 import com.fisw.proyecto.modelo.Categoria;
-import com.fisw.proyecto.modelo.ProductoCompuesto;
 import com.fisw.proyecto.modelo.Producto;
+import com.fisw.proyecto.modelo.ProductoCompuesto;
 import com.fisw.proyecto.modelo.ProductoCompuestoSubproducto;
 import com.fisw.proyecto.repository.CategoriaRepository;
 import com.fisw.proyecto.repository.ProductoCompuestoRepository;
 import com.fisw.proyecto.repository.ProductoRepository;
-import com.fisw.proyecto.repository.ProductoCompuestoSubproductoRepository;
-
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/producto-compuesto")
 public class ProductoCompuestoController {
-
-    private final ProductoCompuestoRepository productoCompuestoRepository;
-    private final ProductoRepository productoRepository;
-    private final CategoriaRepository categoriaRepository;
-    private final ProductoCompuestoSubproductoRepository productoCompuestoSubproductoRepository;
-
-    public ProductoCompuestoController(
-        ProductoCompuestoRepository productoCompuestoRepository, 
-        ProductoRepository productoRepository, 
-        CategoriaRepository categoriaRepository,
-        ProductoCompuestoSubproductoRepository productoCompuestoSubproductoRepository) {
-        
-        this.productoCompuestoRepository = productoCompuestoRepository;
-        this.productoRepository = productoRepository;
-        this.categoriaRepository = categoriaRepository;
-        this.productoCompuestoSubproductoRepository = productoCompuestoSubproductoRepository;
-    }
+    @Autowired
+    private  ProductoCompuestoRepository productoCompuestoRepository;
+    @Autowired
+    private  CategoriaRepository categoriaRepository;
+    @Autowired
+    private  ProductoRepository productoRepository;
 
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
-    public ProductoCompuesto crearProductoCompuesto(
-            @RequestBody ProductoCompuesto productoCompuesto, 
-            @RequestParam Integer categoriaId, 
-            @RequestBody List<SubproductoCantidad> subproductos) {
+    public ResponseEntity<?> crearProductoCompuesto(@RequestBody ProductoCompuesto productoCompuestoInput) {
+        try {
+            // Crear el objeto ProductoCompuesto
+            ProductoCompuesto productoCompuesto = new ProductoCompuesto();
+            productoCompuesto.setNombre(productoCompuestoInput.getNombre());
+            productoCompuesto.setPrecioBase(productoCompuestoInput.getPrecioBase());
 
-        Categoria categoria = categoriaRepository.findById(categoriaId)
-                .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
-        productoCompuesto.setCategoria(categoria);
+            // Asignar la categoría si se especifica
+            if (productoCompuestoInput.getCategoria() != null && productoCompuestoInput.getCategoria().getId() != null) {
+                Categoria categoria = categoriaRepository.findById(productoCompuestoInput.getCategoria().getId())
+                        .orElseThrow(() -> new RuntimeException("Categoría no encontrada con ID: " 
+                                                                + productoCompuestoInput.getCategoria().getId()));
+                productoCompuesto.setCategoria(categoria);
+            }
 
-        for (SubproductoCantidad subproductoCantidad : subproductos) {
-            Producto subproducto = productoRepository.findById(subproductoCantidad.getSubproductoId())
-                    .orElseThrow(() -> new RuntimeException("Subproducto con ID " + subproductoCantidad.getSubproductoId() + " no encontrado"));
+            // Crear y asignar los subproductos
+            List<ProductoCompuestoSubproducto> subproductos = new ArrayList<>();
+            for (ProductoCompuestoSubproducto pcsInput : productoCompuestoInput.getSubproductos()) {
+                if (pcsInput.getSubproducto() != null && pcsInput.getSubproducto().getId() != null) {
+                    Producto subproducto = productoRepository.findById(pcsInput.getSubproducto().getId())
+                            .orElseThrow(() -> new RuntimeException("Subproducto no encontrado con ID: " 
+                                                                    + pcsInput.getSubproducto().getId()));
 
-            ProductoCompuestoSubproducto compuestoSubproducto = new ProductoCompuestoSubproducto();
-            compuestoSubproducto.setProductoCompuesto(productoCompuesto);
-            compuestoSubproducto.setSubproducto(subproducto);
-            compuestoSubproducto.setCantidad(subproductoCantidad.getCantidad());
+                    ProductoCompuestoSubproducto pcs = new ProductoCompuestoSubproducto();
+                    pcs.setProductoCompuesto(productoCompuesto); 
+                    pcs.setSubproducto(subproducto);
+                    pcs.setCantidad(pcsInput.getCantidad());
+                    subproductos.add(pcs);
+                }
+            }
 
-            productoCompuesto.getSubproductos().add(compuestoSubproducto);
-            productoCompuestoSubproductoRepository.save(compuestoSubproducto);
+            productoCompuesto.setSubproductos(subproductos);
+
+            // Guardar el ProductoCompuesto y sus subproductos
+            ProductoCompuesto productoCompuestoGuardado = productoCompuestoRepository.save(productoCompuesto);
+
+            // Guardar los subproductos asociados
+            productoCompuestoGuardado.setSubproductos(subproductos);
+            productoCompuestoRepository.save(productoCompuestoGuardado);
+
+            return ResponseEntity.ok(productoCompuestoGuardado);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al crear el ProductoComponente: " + e.getMessage());
         }
-
-        return productoCompuestoRepository.save(productoCompuesto);
     }
 
+    // Obtener todaos los productos compuestos
     @GetMapping("/")
     public Iterable<ProductoCompuesto> getProductosCompuestos() {
         return productoCompuestoRepository.findAll();
     }
 
-    public static class SubproductoCantidad {
-        private Integer subproductoId;
-        private int cantidad;
-
-        public Integer getSubproductoId() {
-            return subproductoId;
-        }
-
-        public void setSubproductoId(Integer subproductoId) {
-            this.subproductoId = subproductoId;
-        }
-
-        public int getCantidad() {
-            return cantidad;
-        }
-
-        public void setCantidad(int cantidad) {
-            this.cantidad = cantidad;
-        }
-    }
 }
