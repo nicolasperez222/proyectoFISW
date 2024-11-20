@@ -12,11 +12,9 @@ async function cargarDepartamentos() {
         const departamentoSimpleSelect = document.getElementById('categoriaSimple');
         const departamentoSimpleSelectC = document.getElementById('categoriaCompuesto');
         
-        // Limpiar las opciones antes de agregar
         departamentoSimpleSelect.innerHTML = '';
         departamentoSimpleSelectC.innerHTML = '';
         
-        // Agregar opción por defecto
         const opcionDefault = document.createElement('option');
         opcionDefault.textContent = 'Ninguno';
         opcionDefault.value = '';
@@ -25,7 +23,6 @@ async function cargarDepartamentos() {
         const opcionDefaultC = opcionDefault.cloneNode(true);
         departamentoSimpleSelectC.appendChild(opcionDefaultC);
         
-        // Agregar departamentos al select
         departamentos.forEach(departamento => {
             const option = document.createElement('option');
             option.value = departamento.id;
@@ -60,7 +57,6 @@ async function crearProductoSimple() {
     }
 
     try {
-        // Enviar la solicitud POST al backend
         const response = await fetch(`/producto/?categoriaId=${categoriaId || ''}`, {
             method: 'POST',
             headers: {
