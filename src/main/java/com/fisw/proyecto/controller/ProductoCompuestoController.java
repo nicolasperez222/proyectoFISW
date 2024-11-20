@@ -1,6 +1,5 @@
 package com.fisw.proyecto.controller;
 
-import com.fisw.proyecto.modelo.Categoria;
 import com.fisw.proyecto.modelo.Producto;
 import com.fisw.proyecto.modelo.ProductoCompuesto;
 import com.fisw.proyecto.modelo.ProductoCompuestoSubproducto;

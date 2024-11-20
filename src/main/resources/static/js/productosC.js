@@ -4,6 +4,7 @@ window.onload = function() {
 };
 
 // Función para cargar los departamentos
+// Función para cargar los departamentos
 async function cargarDepartamentos() {
     try {
         const response = await fetch('/categoria/');
@@ -12,28 +13,36 @@ async function cargarDepartamentos() {
         const departamentoSimpleSelect = document.getElementById('categoriaSimple');
         const departamentoSimpleSelectC = document.getElementById('categoriaCompuesto');
         
+        // Limpiar las opciones existentes
         departamentoSimpleSelect.innerHTML = '';
         departamentoSimpleSelectC.innerHTML = '';
-        
+      
         const opcionDefault = document.createElement('option');
         opcionDefault.textContent = 'Ninguno';
         opcionDefault.value = '';
         departamentoSimpleSelect.appendChild(opcionDefault);
         
-        const opcionDefaultC = opcionDefault.cloneNode(true);
+        const opcionDefaultC = document.createElement('option');
+        opcionDefaultC.textContent = 'Ninguno';
+        opcionDefaultC.value = '';
         departamentoSimpleSelectC.appendChild(opcionDefaultC);
         
         departamentos.forEach(departamento => {
-            const option = document.createElement('option');
-            option.value = departamento.id;
-            option.textContent = departamento.nombre;
-            departamentoSimpleSelect.appendChild(option);
-            departamentoSimpleSelectC.appendChild(option);
+            const optionSimple = document.createElement('option');
+            optionSimple.value = departamento.id;
+            optionSimple.textContent = departamento.nombre;
+            departamentoSimpleSelect.appendChild(optionSimple);
+        
+            const optionCompuesto = document.createElement('option');
+            optionCompuesto.value = departamento.id;
+            optionCompuesto.textContent = departamento.nombre;
+            departamentoSimpleSelectC.appendChild(optionCompuesto);
         });
     } catch (error) {
         console.error('Error al cargar los departamentos:', error);
     }
 }
+
 
 
 // Mostrar el formulario correspondiente
@@ -290,15 +299,17 @@ function cancelarEdicion() {
 
 function mostrarMensaje(mensaje, tipo) {
     const responseMessageElement = document.getElementById('responseMessage');
-    responseMessageElement.innerText = mensaje;
+    responseMessageElement.innerText = mensaje; 
     responseMessageElement.classList.remove('success', 'error');
     responseMessageElement.classList.add(tipo);
 
     responseMessageElement.style.display = 'block';
+    responseMessageElement.style.opacity = '1'; 
+
     setTimeout(() => {
         responseMessageElement.style.opacity = '0';
         setTimeout(() => {
-            responseMessageElement.style.display = 'none'; 
+            responseMessageElement.style.display = 'none';
             responseMessageElement.style.opacity = '1'; 
         }, 500);
     }, 3000);
@@ -308,7 +319,7 @@ function mostrarMensaje(mensaje, tipo) {
 
 //PRODUCTO COMPUESTO
 function mostrarMensajeC(mensaje, tipo) {
-    const responseMessageElement = document.getElementById('responseMessageC');
+    const responseMessageElement = document.getElementById('responseMessage');
     responseMessageElement.innerText = mensaje;
     responseMessageElement.classList.remove('success', 'error');
     responseMessageElement.classList.add(tipo);
@@ -465,8 +476,6 @@ async function crearProductoCompuesto() {
 
     const jsonProductoCompuesto = JSON.stringify(productoCompuesto, null, 2);
 
-    console.log("JSON a enviar:", jsonProductoCompuesto);
-
     try {
         const response = await fetch('/producto-compuesto/', {
             method: 'POST',
@@ -478,15 +487,15 @@ async function crearProductoCompuesto() {
 
         if (response.ok) {
             const data = await response.json();
-            mostrarMensajeC(`Producto compuesto creado con éxito. ID: ${data.id}`, 'success');
+            mostrarMensaje(`Producto compuesto creado con éxito.`, 'success');
+            console.log(data.JSON);
             limpiarFormularioProductoCompuesto();
         } else {
             const errorText = await response.text();
-            mostrarMensajeC(`Error al crear el producto compuesto: ${errorText}`, 'error');
+            mostrarMensaje(`Error al crear el producto compuesto: ${errorText}`, 'error');
         }
     } catch (error) {
-        console.error('Error al crear el producto compuesto:', error);
-        mostrarMensajeC('Error al conectar con el servidor.', 'error');
+        mostrarMensaje('Error al conectar con el servidor.', 'error');
     }
 }
 

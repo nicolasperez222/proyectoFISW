@@ -57,8 +57,7 @@
                 <button class="btn btn-warning" type="button" onclick="actualizarProducto()">Actualizar Producto</button>
                 <button class="btn btn-danger" type="button" onclick="cancelarEdicion()">Cancelar</button>
             </div>
-            <!-- Mensajes de Respuesta -->
-            <p id="responseMessage"></p>
+           
         </form>
 
 
@@ -84,56 +83,45 @@
                     <option value="">Seleccione un departamento</option>
                 </select>
             </div>
-
             <br>
-
-            <!-- Botón para Agregar Subproducto -->
-            <div class="form-row">
-                <button type="button" class="btn btn-primary" onclick="mostrarFormularioSubproducto()">Agregar Subproducto</button>
-            </div>
-
             <div id="subproductosContainer">
                 <h3>Subproductos</h3>
                 <ul id="listaSubproductos">
                     
                 </ul>
             </div>
-            
+            <div id="formSubproducto" style="display:none;">
+                <h3>Agregar Subproducto</h3>
+    
+                <div class="form-row">
+                    <label for="buscarSubproducto">Buscar Subproducto</label>
+                    <input type="text" id="buscarSubproducto" placeholder="Buscar por nombre..." oninput="buscarSubproductoPorNombre()">
+                    <ul id="resultadosBusqueda" style="display:none; list-style-type: none; padding: 0;"></ul>
+                </div>
+    
+                <div class="form-row">
+                    <label for="cantidadSubproducto">Cantidad</label>
+                    <input type="number" id="cantidadSubproducto" min="1" value="1">
+                </div>
+                <br>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-primary" onclick="agregarSubproducto()">Confirmar</button>
+                    <button type="button" class="btn btn-secondary" onclick="cancelarAgregarSubproducto()">Cancelar</button>
+                </div>
+                <br>
+            </div>
+            <!-- Botón para Agregar Subproducto -->
+            <div class="form-row">
+                <button type="button" class="btn btn-primary" onclick="mostrarFormularioSubproducto()">Agregar Subproducto</button>
+            </div>
             <br>
             <div class="form-actions">
                 <button class="btn btn-primary" type="button" onclick="crearProductoCompuesto()">Crear Producto Compuesto</button>
             </div>
-
-            <!-- Mensajes de Respuesta -->
-            <p id="responseMessageC"></p>
+         
         </form>
-
-        <!-- Formulario para Agregar Subproducto -->
-        <div id="formSubproducto" style="display:none;">
-            <h3>Agregar Subproducto</h3>
-
-            <div class="form-row">
-                <label for="buscarSubproducto">Buscar Subproducto</label>
-                <input type="text" id="buscarSubproducto" placeholder="Buscar por nombre..." oninput="buscarSubproductoPorNombre()">
-                <ul id="resultadosBusqueda" style="display:none; list-style-type: none; padding: 0;"></ul>
-            </div>
-
-            <div class="form-row">
-                <label for="cantidadSubproducto">Cantidad</label>
-                <input type="number" id="cantidadSubproducto" min="1" value="1">
-            </div>
-            <br>
-            <div class="form-actions">
-                <button type="button" class="btn btn-primary" onclick="agregarSubproducto()">Confirmar</button>
-                <button type="button" class="btn btn-secondary" onclick="cancelarAgregarSubproducto()">Cancelar</button>
-            </div>
-        </div>
-
-
-
-
-
-        
+         <!-- Mensajes de Respuesta -->
+         <p id="responseMessage"></p>
     </div>
 
     <!-- Modal para Buscar Producto -->
