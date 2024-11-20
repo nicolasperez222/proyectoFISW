@@ -139,39 +139,6 @@ function seleccionarProducto(id, nombre, precioCosto, precioVenta, categoriaId) 
     cerrarModalBuscarProducto();
 }
 
-// Función para crear o actualizar un producto simple
-async function crearProductoSimple() {
-    const form = document.getElementById('createProductFormSimple');
-    const id = form.dataset.productId || null;
-    const nombre = document.getElementById('nombreSimple').value;
-    const precioCosto = document.getElementById('precioCostoSimple').value;
-    const precioVenta = document.getElementById('precioVentaSimple').value;
-    const categoriaId = document.getElementById('categoriaSimple').value;
-
-    if (!nombre || !precioCosto || !precioVenta || !categoriaId) {
-        mostrarMensaje('Por favor, completa todos los campos.', 'error');
-        return;
-    }
-
-    try {
-        const response = await fetch(id ? `/producto/${id}` : `/producto/`, {
-            method: id ? 'PUT' : 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ nombre, precioCosto, precioVenta, categoriaId })
-        });
-
-        const mensaje = response.ok 
-            ? id ? 'Producto actualizado con éxito.' : 'Producto creado con éxito.' 
-            : 'Error al procesar la solicitud.';
-
-        mostrarMensaje(mensaje, response.ok ? 'success' : 'error');
-        cancelarEdicion();
-
-    } catch (error) {
-        console.error('Error al procesar el producto:', error);
-        mostrarMensaje('Error al procesar el producto.', 'error');
-    }
-}
 
 // Función para cancelar la edición del producto
 function cancelarEdicion() {

@@ -20,31 +20,49 @@
         </div>
 
         <!-- Formulario para Producto Simple -->
-        <form id="createProductFormSimple">
+        <form id="createProductFormSimple" class="formulario-producto">
             <h2>Producto Simple</h2>
-            <button type="button" onclick="buscar()">Buscar Producto</button><br>
-
-            <label for="nombreSimple">Nombre del Producto</label>
-            <input type="text" id="nombreSimple" name="nombreSimple" required>
-
-            <label for="precioCostoSimple">Precio de Costo</label>
-            <input type="number" id="precioCostoSimple" name="precioCostoSimple" required>
-
-            <label for="precioVentaSimple">Precio de Venta</label>
-            <input type="number" id="precioVentaSimple" name="precioVentaSimple" required>
-
-            <label for="categoriaSimple">Departamento</label>
-            <select id="categoriaSimple" name="categoriaSimple">
-                <option value="">Seleccione un departamento</option>
-            </select>
-
-            <button type="button" onclick="crearProductoSimple()">Crear Producto Simple</button>
-            <div id="modificar">
-                <button type="button" onclick="crearProductoSimple()">Actualizar Producto</button>
-                <button type="button" onclick="crearProductoSimple()">Cancelar</button>
+        
+            <!-- Botón Buscar Producto -->
+            <div class="form-row">
+                <button type="button" class="btn btn-search" onclick="buscar()">Buscar Producto</button>
             </div>
-            
+        
+            <div class="form-row">
+                <label for="nombreSimple">Nombre del Producto</label>
+                <input type="text" id="nombreSimple" name="nombreSimple" required>
+            </div>
+        
+            <div class="form-row">
+                <label for="precioCostoSimple">Precio de Costo</label>
+                <input type="number" id="precioCostoSimple" name="precioCostoSimple" required>
+            </div>
+        
+            <div class="form-row">
+                <label for="precioVentaSimple">Precio de Venta</label>
+                <input type="number" id="precioVentaSimple" name="precioVentaSimple" required>
+            </div>
+        
+            <div class="form-row">
+                <label for="categoriaSimple">Departamento</label>
+                <select id="categoriaSimple" name="categoriaSimple">
+                    <option value="">Seleccione un departamento</option>
+                </select>
+            </div>
+        
+            <!-- Acciones principales -->
+            <div class="form-actions">
+                <button type="button" class="btn btn-primary" onclick="crearProductoSimple()">Crear Producto</button>
+                <button type="button" class="btn btn-secondary" onclick="mostrarFormulario('compuesto')">Cambiar a Compuesto</button>
+            </div>
+        
+            <!-- Acciones de Actualización -->
+            <div id="modificar" class="form-actions actualizar" style="display:none;">
+                <button type="button" class="btn btn-warning" onclick="actualizarProducto()">Actualizar Producto</button>
+                <button type="button" class="btn btn-danger" onclick="cancelarEdicion()">Cancelar</button>
+            </div>
         </form>
+        
 
         <!-- Formulario para Producto Compuesto -->
         <form id="createProductFormCompuesto" style="display:none;">

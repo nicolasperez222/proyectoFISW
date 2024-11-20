@@ -62,7 +62,7 @@ public class ProductoController {
         return ResponseEntity.ok(productos);
     }
 
-    @DeleteMapping("/producto/{id}")
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void eliminarProducto(@PathVariable Integer id) {
         productoRepository.deleteById(id);
