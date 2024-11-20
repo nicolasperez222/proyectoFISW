@@ -13,70 +13,72 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("/producto-compuesto")
 public class ProductoCompuestoController {
+
     @Autowired
-    private  ProductoCompuestoRepository productoCompuestoRepository;
+    private ProductoCompuestoRepository productoCompuestoRepository;
+
     @Autowired
-    private  CategoriaRepository categoriaRepository;
+    private CategoriaRepository categoriaRepository;
+
     @Autowired
-    private  ProductoRepository productoRepository;
+    private ProductoRepository productoRepository;
 
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> crearProductoCompuesto(@RequestBody ProductoCompuesto productoCompuestoInput) {
-        try {
-            // Crear el objeto ProductoCompuesto
-            ProductoCompuesto productoCompuesto = new ProductoCompuesto();
-            productoCompuesto.setNombre(productoCompuestoInput.getNombre());
-            productoCompuesto.setPrecioBase(productoCompuestoInput.getPrecioBase());
+    public ProductoCompuesto crearProductoCompuesto(@RequestBody ProductoCompuesto productoCompuesto) {
+        Logger logger = LoggerFactory.getLogger(ProductoCompuestoController.class);
 
-            // Asignar la categoría si se especifica
-            if (productoCompuestoInput.getCategoria() != null && productoCompuestoInput.getCategoria().getId() != null) {
-                Categoria categoria = categoriaRepository.findById(productoCompuestoInput.getCategoria().getId())
-                        .orElseThrow(() -> new RuntimeException("Categoría no encontrada con ID: " 
-                                                                + productoCompuestoInput.getCategoria().getId()));
-                productoCompuesto.setCategoria(categoria);
-            }
+        // Imprimir el JSON que se recibe en la solicitud
+        logger.info("JSON recibido: {}", productoCompuesto);
 
-            // Crear y asignar los subproductos
-            List<ProductoCompuestoSubproducto> subproductos = new ArrayList<>();
-            for (ProductoCompuestoSubproducto pcsInput : productoCompuestoInput.getSubproductos()) {
-                if (pcsInput.getSubproducto() != null && pcsInput.getSubproducto().getId() != null) {
-                    Producto subproducto = productoRepository.findById(pcsInput.getSubproducto().getId())
-                            .orElseThrow(() -> new RuntimeException("Subproducto no encontrado con ID: " 
-                                                                    + pcsInput.getSubproducto().getId()));
-
-                    ProductoCompuestoSubproducto pcs = new ProductoCompuestoSubproducto();
-                    pcs.setProductoCompuesto(productoCompuesto); 
-                    pcs.setSubproducto(subproducto);
-                    pcs.setCantidad(pcsInput.getCantidad());
-                    subproductos.add(pcs);
-                }
-            }
-
-            productoCompuesto.setSubproductos(subproductos);
-
-            // Guardar el ProductoCompuesto y sus subproductos
-            ProductoCompuesto productoCompuestoGuardado = productoCompuestoRepository.save(productoCompuesto);
-
-            // Guardar los subproductos asociados
-            productoCompuestoGuardado.setSubproductos(subproductos);
-            productoCompuestoRepository.save(productoCompuestoGuardado);
-
-            return ResponseEntity.ok(productoCompuestoGuardado);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al crear el ProductoComponente: " + e.getMessage());
+        // Asociar la categoría al ProductoCompuesto
+        if (productoCompuesto.getCategoria() != null && productoCompuesto.getCategoria().getId() != null) {
+            productoCompuesto.setCategoria(categoriaRepository.findById(productoCompuesto.getCategoria().getId()).orElse(null));
         }
+
+        // Crear una lista para guardar los subproductos procesados
+        List<ProductoCompuestoSubproducto> subproductosConCantidad = new ArrayList<>();
+
+        // Verificar y asociar los subproductos con la cantidad
+        for (ProductoCompuestoSubproducto subproducto : productoCompuesto.getSubproductos()) {
+            Producto producto = productoRepository.findById(subproducto.getSubproducto().getId()).orElse(null);
+            if (producto != null) {
+
+                // Verificar que la cantidad sea mayor que 0
+                if (subproducto.getCantidad() <= 0) {
+                    throw new IllegalArgumentException("La cantidad del subproducto debe ser mayor que 0");
+                }
+
+                // Asociar el subproducto al ProductoCompuesto
+                subproducto.setProductoCompuesto(productoCompuesto);
+
+                // Asociar el Producto con la cantidad al subproducto
+                subproducto.setSubproducto(producto);
+
+                // Añadir el subproducto con su cantidad a la lista
+                subproductosConCantidad.add(subproducto);
+            } else {
+                throw new IllegalArgumentException("Producto no encontrado con ID: " + subproducto.getSubproducto().getId());
+            }
+        }
+
+        // Asignar la lista de subproductos procesados al ProductoCompuesto
+        productoCompuesto.setSubproductos(subproductosConCantidad);
+
+        // Guardar el ProductoCompuesto y sus subproductos
+        return productoCompuestoRepository.save(productoCompuesto);
     }
 
-    // Obtener todaos los productos compuestos
+    // Obtener todos los productos compuestos
     @GetMapping("/")
     public Iterable<ProductoCompuesto> getProductosCompuestos() {
         return productoCompuestoRepository.findAll();
     }
-
 }
+

@@ -1,6 +1,6 @@
 window.onload = function() {
-    cargarDepartamentos(); // Cargar departamentos al iniciar
-    mostrarFormulario('simple'); // Mostrar formulario de producto simple por defecto
+    cargarDepartamentos(); 
+    mostrarFormulario('simple'); 
 };
 
 // Función para cargar los departamentos
@@ -10,27 +10,34 @@ async function cargarDepartamentos() {
         const departamentos = await response.json();
         
         const departamentoSimpleSelect = document.getElementById('categoriaSimple');
+        const departamentoSimpleSelectC = document.getElementById('categoriaCompuesto');
         
         // Limpiar las opciones antes de agregar
         departamentoSimpleSelect.innerHTML = '';
-
+        departamentoSimpleSelectC.innerHTML = '';
+        
         // Agregar opción por defecto
         const opcionDefault = document.createElement('option');
         opcionDefault.textContent = 'Ninguno';
         opcionDefault.value = '';
         departamentoSimpleSelect.appendChild(opcionDefault);
-
+        
+        const opcionDefaultC = opcionDefault.cloneNode(true);
+        departamentoSimpleSelectC.appendChild(opcionDefaultC);
+        
         // Agregar departamentos al select
         departamentos.forEach(departamento => {
             const option = document.createElement('option');
             option.value = departamento.id;
             option.textContent = departamento.nombre;
             departamentoSimpleSelect.appendChild(option);
+            departamentoSimpleSelectC.appendChild(option);
         });
     } catch (error) {
         console.error('Error al cargar los departamentos:', error);
     }
 }
+
 
 // Mostrar el formulario correspondiente
 function mostrarFormulario(tipo) {
@@ -161,7 +168,7 @@ async function eliminarProducto(id) {
 function mostrarMensaje(texto, tipo = 'success') {
     const mensaje = document.getElementById('responseMessage');
     mensaje.innerText = texto;
-    mensaje.className = tipo; // Define la clase CSS ('success', 'error')
+    mensaje.className = tipo; 
     setTimeout(() => {
         mensaje.innerText = '';
         mensaje.className = '';
@@ -179,14 +186,12 @@ async function filtrarProductos() {
     const tbody = document.querySelector('#tablaProductos tbody');
 
     try {
-        // Llama al backend con el filtro
+
         const response = await fetch(`/producto/buscar?filtro=${filtro}`);
         const productos = await response.json();
 
-        // Limpia la tabla
         tbody.innerHTML = '';
 
-        // Llena la tabla con los productos filtrados
         productos.forEach(producto => {
             const row = document.createElement('tr');
 
@@ -210,23 +215,18 @@ async function filtrarProductos() {
 
 // Función para seleccionar un producto desde la tabla de búsqueda
 function seleccionarProducto(id, nombre, precioCosto, precioVenta, categoriaId) {
-    // Establece los valores en los campos del formulario
     document.getElementById('nombreSimple').value = nombre;
     document.getElementById('precioCostoSimple').value = precioCosto;
     document.getElementById('precioVentaSimple').value = precioVenta;
 
-    // Establece el id del producto para la edición
     const form = document.getElementById('createProductFormSimple');
     form.dataset.productId = id;
 
-    // Si hay una categoría, selecciona el valor en el campo de categoría
     const categoriaSelect = document.getElementById('categoriaSimple');
-    categoriaSelect.value = categoriaId ? categoriaId : ''; // Selecciona la categoría si existe
+    categoriaSelect.value = categoriaId ? categoriaId : '';
 
-    // Oculta el botón de crear y muestra el de actualizar
     document.getElementById('crearSimple').style.display = 'none';
     document.getElementById('modificar').style.display = 'inline-block';
-    // Cerrar el modal de búsqueda
     cerrarModalBuscarProducto();
 }
 
@@ -311,9 +311,40 @@ function mostrarMensaje(mensaje, tipo) {
 
 
 //PRODUCTO COMPUESTO
+function mostrarMensajeC(mensaje, tipo) {
+    const responseMessageElement = document.getElementById('responseMessageC');
+    responseMessageElement.innerText = mensaje;
+    responseMessageElement.classList.remove('success', 'error');
+    responseMessageElement.classList.add(tipo);
+
+    responseMessageElement.style.display = 'block';
+    setTimeout(() => {
+        responseMessageElement.style.opacity = '0';
+        setTimeout(() => {
+            responseMessageElement.style.display = 'none'; 
+            responseMessageElement.style.opacity = '1'; 
+        }, 500);
+    }, 3000);
+}
 
 let subproductosSeleccionados = []; 
 let subproductoEditando = null;     
+
+
+function limpiarFormularioProductoCompuesto() {
+
+    document.getElementById("nombreCompuesto").value = "";
+    document.getElementById("precioBase").value = "";
+    document.getElementById("categoriaCompuesto").selectedIndex = 0;
+
+    const listaSubproductos = document.getElementById("listaSubproductos");
+    listaSubproductos.innerHTML = ""; 
+
+    document.getElementById("responseMessage").textContent = "";
+
+    subproductosSeleccionados = [];
+    subproductoEditando = null;
+}
 
 function mostrarFormularioSubproducto() {
     document.getElementById('formSubproducto').style.display = 'block';
@@ -322,7 +353,6 @@ function mostrarFormularioSubproducto() {
 }
 
 function cancelarAgregarSubproducto() {
-    // Ocultar el formulario para agregar subproducto
     document.getElementById('formSubproducto').style.display = 'none';
     document.getElementById('buscarSubproducto').value = '';
     document.getElementById('resultadosBusqueda').style.display = 'none';
@@ -330,8 +360,6 @@ function cancelarAgregarSubproducto() {
 
 async function buscarSubproductoPorNombre() {
     const query = document.getElementById('buscarSubproducto').value;
-
-    // Verificar que el usuario haya ingresado al menos 3 caracteres
     if (query.length < 3) {
         document.getElementById('resultadosBusqueda').style.display = 'none';
         return;
@@ -340,10 +368,8 @@ async function buscarSubproductoPorNombre() {
     try {
         const response = await fetch(`/producto/buscar?filtro=${query}`);
         const productos = await response.json();
-
-        // Mostrar los resultados de la búsqueda de subproductos
         const listaResultados = document.getElementById('resultadosBusqueda');
-        listaResultados.innerHTML = ''; // Limpiar resultados anteriores
+        listaResultados.innerHTML = '';
 
         productos.forEach(producto => {
             const item = document.createElement('li');
@@ -367,28 +393,24 @@ async function buscarSubproductoPorNombre() {
 
 function seleccionarSubproducto(producto) {
     const cantidad = document.getElementById('cantidadSubproducto').value;
-
-    // Verificar que se haya seleccionado una cantidad válida
     if (cantidad <= 0) {
         alert('Por favor, ingrese una cantidad válida.');
         return;
     }
 
     if (subproductoEditando) {
-        // Si se está editando un subproducto, actualizar la cantidad y nombre
         subproductoEditando.nombre = producto.nombre;
-        subproductoEditando.productoId = producto.id;
+        subproductoEditando.id = producto.id;
         subproductoEditando.cantidad = cantidad;
     } else {
-        // Si no se está editando, agregar un nuevo subproducto
         subproductosSeleccionados.push({
-            productoId: producto.id,
+            id: producto.id,
             nombre: producto.nombre,
             cantidad: cantidad
         });
+        
     }
 
-    // Actualizar la lista de subproductos
     actualizarListaSubproductos();
     cancelarAgregarSubproducto();
 }
@@ -399,7 +421,7 @@ function actualizarListaSubproductos() {
 
     subproductosSeleccionados.forEach((subproducto, index) => {
         const item = document.createElement('li');
-        item.innerHTML = `${subproducto.nombre} (Cantidad: ${subproducto.cantidad}) 
+        item.innerHTML = `ID: ${subproducto.id} - ${subproducto.nombre} (Cantidad: ${subproducto.cantidad}) 
         <button type="button" onclick="editarSubproducto(${index})">Editar</button>
         <button type="button" onclick="eliminarSubproducto(${index})">Eliminar</button>`;
         lista.appendChild(item);
@@ -409,113 +431,103 @@ function actualizarListaSubproductos() {
 function editarSubproducto(index) {
     subproductoEditando = subproductosSeleccionados[index];
 
-    // Mostrar el formulario de subproducto con los datos para editar
     document.getElementById('formSubproducto').style.display = 'block';
     document.getElementById('buscarSubproducto').value = subproductoEditando.nombre;
     document.getElementById('cantidadSubproducto').value = subproductoEditando.cantidad;
 }
 
 function eliminarSubproducto(index) {
-    subproductosSeleccionados.splice(index, 1); // Eliminar el subproducto de la lista
+    subproductosSeleccionados.splice(index, 1);
     actualizarListaSubproductos(); 
 }
-
 async function crearProductoCompuesto() {
-    // Obtener valores del formulario
     const nombre = document.getElementById('nombreCompuesto').value;
     const precioBase = parseFloat(document.getElementById('precioBase').value);
     const categoriaId = document.getElementById('categoriaCompuesto').value;
-    
-    // Subproductos seleccionados
+
+    if (!nombre || !precioBase) {
+        mostrarMensaje('El nombre y el precio base son obligatorios.', 'error');
+        return;
+    }
+
     const subproductos = subproductosSeleccionados.map(subproducto => ({
-        subproducto: { id: subproducto.id },
+        subproducto: { id: parseInt(subproducto.id, 10) },
         cantidad: subproducto.cantidad
     }));
 
-    // Validar que haya subproductos
     if (subproductos.length === 0) {
         mostrarMensaje('Debes agregar al menos un subproducto.', 'error');
         return;
     }
 
-    // Crear el objeto a enviar
     const productoCompuesto = {
         nombre,
         precioBase,
-        categoria: categoriaId ? { id: parseInt(categoriaId) } : null,
+        categoria: categoriaId ? { id: parseInt(categoriaId, 10) } : null, 
         subproductos
     };
 
+    const jsonProductoCompuesto = JSON.stringify(productoCompuesto, null, 2);
+
+    console.log("JSON a enviar:", jsonProductoCompuesto);
+
     try {
-        
         const response = await fetch('/producto-compuesto/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(productoCompuesto)
+            body: jsonProductoCompuesto
         });
-        
 
-        // Verificar la respuesta
         if (response.ok) {
             const data = await response.json();
-            mostrarMensaje(`Producto compuesto creado con éxito. ID: ${data.id}`, 'success');
+            mostrarMensajeC(`Producto compuesto creado con éxito. ID: ${data.id}`, 'success');
             limpiarFormularioProductoCompuesto();
         } else {
             const errorText = await response.text();
-            mostrarMensaje(`Error al crear el producto compuesto: ${errorText}`, 'error');
+            mostrarMensajeC(`Error al crear el producto compuesto: ${errorText}`, 'error');
         }
     } catch (error) {
         console.error('Error al crear el producto compuesto:', error);
-        mostrarMensaje('Error al conectar con el servidor.', 'error');
+        mostrarMensajeC('Error al conectar con el servidor.', 'error');
     }
 }
 
 
-
-
 function agregarSubproducto() {
-    const nombreSubproducto = document.getElementById('buscarSubproducto').value; // Obtener el nombre del subproducto
-    const cantidadSubproducto = parseInt(document.getElementById('cantidadSubproducto').value, 10); // Obtener la cantidad como número
+    const nombreSubproducto = document.getElementById('buscarSubproducto').value;
+    const idSubproducto = document.getElementById('buscarSubproducto').dataset.id;
+    const cantidadSubproducto = parseInt(document.getElementById('cantidadSubproducto').value, 10); 
 
-    // Verificar que la cantidad sea válida
     if (isNaN(cantidadSubproducto) || cantidadSubproducto <= 0) {
         alert('Por favor, ingrese una cantidad válida mayor que 0.');
         return;
     }
 
-    // Verificar que el nombre no esté vacío
     if (nombreSubproducto.trim() === '') {
         alert('Por favor, ingrese un nombre válido para el subproducto.');
         return;
     }
 
-    // Crear el objeto subproducto
     const subproducto = {
         nombre: nombreSubproducto,
-        cantidad: cantidadSubproducto
+        cantidad: cantidadSubproducto,
+        id: parseInt(idSubproducto, 10)
     };
 
-    // Verificar si ya existe un subproducto con ese nombre
     const indexExistente = subproductosSeleccionados.findIndex(sub => sub.nombre === subproducto.nombre);
 
     if (indexExistente >= 0) {
-        // Si el subproducto ya existe, sumamos la cantidad correctamente (no concatenamos)
         subproductosSeleccionados[indexExistente].cantidad = cantidadSubproducto;
     } else {
-        // Si el subproducto no existe, lo agregamos a la lista
         subproductosSeleccionados.push(subproducto);
     }
 
-    // Actualizar la lista de subproductos visualmente
     actualizarListaSubproductos();
-
-    // Limpiar el campo de búsqueda y cantidad
     document.getElementById('buscarSubproducto').value = '';
     document.getElementById('cantidadSubproducto').value = 1;
 
-    // Ocultar el formulario de agregar subproducto
     document.getElementById('formSubproducto').style.display = 'none';
 }
 
