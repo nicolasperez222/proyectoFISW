@@ -65,7 +65,9 @@
        <!-- Formulario para Producto Compuesto -->
         <form id="createProductFormCompuesto" style="display:none;" class="formulario-producto">
             <h2>Producto Compuesto</h2>
-
+            <div class="form-row">
+                <button type="button" class="btn btn-search" onclick="buscarCompuesto()">Buscar Producto Compuesto</button>
+            </div>
             <!-- Campos para el Producto Compuesto -->
             <div class="form-row">
                 <label for="nombreCompuesto">Nombre del Producto</label>
@@ -121,7 +123,8 @@
          
         </form>
          <!-- Mensajes de Respuesta -->
-         <p id="responseMessage"></p>
+         <p id="responseMessage" style="display:none;"></p>
+
     </div>
 
     <!-- Modal para Buscar Producto -->
@@ -150,6 +153,33 @@
             </table>
         </div>
     </div>
+
+    <!-- Modal para Buscar Producto Comp -->
+    <div class="overlay" id="overlay" style="display:none;" ></div>
+    <div id="modalBuscarProductoCompuesto" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close" onclick="cerrarModalBuscarProductoCompuesto()">&times;</span>
+            <h2>Buscar Producto</h2>
+            <div>
+                <label for="filtroProducto">Buscar Producto:</label>
+                <input type="text" id="filtroProducto" placeholder="Escribe el nombre del producto" oninput="filtrarProductosCompuesto()">
+            </div>
+            <table id="tablaProductosC">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Precio Venta</th>
+                        <th>Departamento</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
 
     <script src="/js/productosC.js"></script>
 </body>

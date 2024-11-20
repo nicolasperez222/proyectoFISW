@@ -4,7 +4,6 @@ window.onload = function() {
 };
 
 // Función para cargar los departamentos
-// Función para cargar los departamentos
 async function cargarDepartamentos() {
     try {
         const response = await fetch('/categoria/');
@@ -486,9 +485,8 @@ async function crearProductoCompuesto() {
         });
 
         if (response.ok) {
-            const data = await response.json();
-            mostrarMensaje(`Producto compuesto creado con éxito.`, 'success');
-            console.log(data.JSON);
+    
+            mostrarMensaje(`Producto creado correctamente.`, 'success');
             limpiarFormularioProductoCompuesto();
         } else {
             const errorText = await response.text();
@@ -537,3 +535,93 @@ function agregarSubproducto() {
 }
 
 
+// Función para buscar productos
+async function buscarCompuesto() {
+    try {
+        const modal = document.getElementById('modalBuscarProductoCompuesto');
+        modal.style.display = 'block';
+        const response = await fetch('/producto-compuesto/');
+        const productos = await response.json();
+
+        llenarTablaProductosCompuesto(productos);
+
+    } catch (error) {
+        console.error('Error al buscar productos:', error);
+    }
+}
+
+
+// Función para cerrar el modal de búsqueda
+function cerrarModalBuscarProductoCompuesto() {
+    const modal = document.getElementById('modalBuscarProductoCompuesto');
+    modal.style.display = 'none';
+}
+
+async function filtrarProductosCompuesto() {
+    const filtro = document.getElementById('filtroProducto').value.toLowerCase(); 
+    const tbody = document.querySelector('#tablaProductosC tbody');
+
+    try {
+
+        const response = await fetch(`/producto-compuesto/buscar?filtro=${filtro}`);
+        const productos = await response.json();
+
+        tbody.innerHTML = '';
+
+        productos.forEach(producto => {
+            const row = document.createElement('tr');
+
+            row.innerHTML = `
+                <td>${producto.id}</td>
+                <td>${producto.nombre}</td>
+                <td>${producto.precioBase}</td>
+                <td>${producto.categoria ? producto.categoria.nombre : 'Sin categoría'}</td>
+                <td>
+                    <button onclick="seleccionarProducto(${producto.id}, '${producto.nombre}', ${producto.precioVenta}, ${producto.categoria ? producto.categoria.id : null})">Seleccionar</button>
+                    <button class="btn btn-danger" onclick="eliminarProducto(${producto.id})">Eliminar</button>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+    } catch (error) {
+        console.error('Error al filtrar productos:', error);
+    }
+}
+
+// Función para llenar la tabla con productos
+function llenarTablaProductosCompuesto(productos) {
+    const tbody = document.querySelector('#tablaProductosC tbody');
+    tbody.innerHTML = '';
+
+    productos.forEach(producto => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${producto.id}</td>
+            <td>${producto.nombre}</td>
+            <td>${producto.precioBase}</td>
+            <td>${producto.categoria ? producto.categoria.nombre : 'Sin categoría'}</td>
+            <td>
+                <button onclick="seleccionarProducto(${producto.id}, '${producto.nombre}', ${producto.precioVenta}, ${producto.categoria ? producto.categoria.id : null})">Seleccionar</button>
+                <button class="btn btn-danger" onclick="eliminarProducto(${producto.id})">Eliminar</button>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+// Función para seleccionar un producto desde la tabla de búsqueda
+function seleccionarProducto(id, nombre, precioCosto, precioVenta, categoriaId) {
+    document.getElementById('nombreSimple').value = nombre;
+    document.getElementById('precioCostoSimple').value = precioCosto;
+    document.getElementById('precioVentaSimple').value = precioVenta;
+
+    const form = document.getElementById('createProductFormSimple');
+    form.dataset.productId = id;
+
+    const categoriaSelect = document.getElementById('categoriaSimple');
+    categoriaSelect.value = categoriaId ? categoriaId : '';
+
+    document.getElementById('crearSimple').style.display = 'none';
+    document.getElementById('modificar').style.display = 'inline-block';
+    cerrarModalBuscarProducto();
+}

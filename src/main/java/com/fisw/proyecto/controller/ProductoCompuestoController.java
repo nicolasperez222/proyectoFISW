@@ -9,6 +9,8 @@ import com.fisw.proyecto.repository.ProductoRepository;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,6 +61,18 @@ public class ProductoCompuestoController {
     @GetMapping("/")
     public Iterable<ProductoCompuesto> getProductosCompuestos() {
         return productoCompuestoRepository.findAll();
+    }
+
+    @GetMapping("/buscar")
+    public ResponseEntity<List<ProductoCompuesto>> buscarProductos(@RequestParam(required = false) String filtro) {
+        
+        if (filtro == null || filtro.isEmpty()) {
+            List<ProductoCompuesto> productos = productoCompuestoRepository.findAll();
+            return ResponseEntity.ok(productos);
+        }
+
+        List<ProductoCompuesto> productos = productoCompuestoRepository.findByNombreContainingIgnoreCase(filtro);
+        return ResponseEntity.ok(productos);
     }
 }
 

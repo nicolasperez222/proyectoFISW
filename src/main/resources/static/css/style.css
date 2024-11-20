@@ -235,33 +235,21 @@ tbody tr:hover {
 }
 
 #responseMessage {
-    display: none;
+    font-size: 16px;
     padding: 10px;
     border-radius: 5px;
-    font-size: 16px;
+    text-align: center;
     margin-top: 10px;
-    transition: opacity 0.5s ease;
-}
-
-#responseMessageC {
-    display: none;
-    padding: 10px;
-    border-radius: 5px;
-    font-size: 16px;
-    margin-top: 10px;
-    transition: opacity 0.5s ease;
+    transition: opacity 0.5s ease-in-out;
+    color: #ffffff;
 }
 
 .success {
-    background-color: #28a745;
-    color: white;
-    border: 1px solid #218838;
+    background-color: #4caf50;
 }
 
 .error {
-    background-color: #dc3545;
-    color: white;
-    border: 1px solid #c82333;
+    background-color: #f44336;
 }
 
 #resultadosSubproductos {
