@@ -10,24 +10,23 @@
 <body>
     <div class="container">
         <div>
-            <button onclick="window.location.href='/'">Volver</button>
+            <button class="btn btn-secondary" onclick="window.location.href='/'">Volver</button>
         </div>
 
         <h1>Gestión de Productos</h1>
-        <div>
-            <button type="button" onclick="mostrarFormulario('simple')">Producto Simple</button>
-            <button type="button" onclick="mostrarFormulario('compuesto')">Producto Compuesto</button>
+        <div class="form-actions">
+            <button class="btn btn-primary" onclick="mostrarFormulario('simple')">Producto Simple</button>
+            <button class="btn btn-secondary" onclick="mostrarFormulario('compuesto')">Producto Compuesto</button>
         </div>
 
         <!-- Formulario para Producto Simple -->
         <form id="createProductFormSimple" class="formulario-producto">
             <h2>Producto Simple</h2>
         
-            <!-- Botón Buscar Producto -->
             <div class="form-row">
                 <button type="button" class="btn btn-search" onclick="buscar()">Buscar Producto</button>
             </div>
-        
+            <br>
             <div class="form-row">
                 <label for="nombreSimple">Nombre del Producto</label>
                 <input type="text" id="nombreSimple" name="nombreSimple" required>
@@ -49,49 +48,93 @@
                     <option value="">Seleccione un departamento</option>
                 </select>
             </div>
-        
-            <!-- Acciones principales -->
+            <br>
             <div class="form-actions">
-                <button type="button" class="btn btn-primary" onclick="crearProductoSimple()">Crear Producto</button>
-                <button type="button" class="btn btn-secondary" onclick="mostrarFormulario('compuesto')">Cambiar a Compuesto</button>
+                <button class="btn btn-primary" type="button" id="crearSimple" onclick="crearProductoSimple()">Crear Producto</button>
             </div>
-        
-            <!-- Acciones de Actualización -->
-            <div id="modificar" class="form-actions actualizar" style="display:none;">
-                <button type="button" class="btn btn-warning" onclick="actualizarProducto()">Actualizar Producto</button>
-                <button type="button" class="btn btn-danger" onclick="cancelarEdicion()">Cancelar</button>
-            </div>
-        </form>
-        
 
-        <!-- Formulario para Producto Compuesto -->
-        <form id="createProductFormCompuesto" style="display:none;">
+            <div id="modificar" class="form-actions actualizar" style="display:none;">
+                <button class="btn btn-warning" type="button" onclick="actualizarProducto()">Actualizar Producto</button>
+                <button class="btn btn-danger" type="button" onclick="cancelarEdicion()">Cancelar</button>
+            </div>
+            <!-- Mensajes de Respuesta -->
+            <p id="responseMessage"></p>
+        </form>
+
+
+
+       <!-- Formulario para Producto Compuesto -->
+        <form id="createProductFormCompuesto" style="display:none;" class="formulario-producto">
             <h2>Producto Compuesto</h2>
 
-            <label for="nombreCompuesto">Nombre del Producto</label>
-            <input type="text" id="nombreCompuesto" name="nombreCompuesto" required>
+            <!-- Campos para el Producto Compuesto -->
+            <div class="form-row">
+                <label for="nombreCompuesto">Nombre del Producto</label>
+                <input type="text" id="nombreCompuesto" name="nombreCompuesto" required>
+            </div>
 
-            <label for="precioBase">Precio Base</label>
-            <input type="number" id="precioBase" name="precioBase" required>
+            <div class="form-row">
+                <label for="precioBase">Precio Base</label>
+                <input type="number" id="precioBase" name="precioBase" required>
+            </div>
 
-            <label for="categoriaCompuesto">Departamento</label>
-            <select id="categoriaCompuesto" name="categoriaCompuesto">
-                <option value="">Seleccione un departamento</option>
-            </select>
+            <div class="form-row">
+                <label for="categoriaCompuesto">Departamento</label>
+                <select id="categoriaCompuesto" name="categoriaCompuesto" required>
+                    <option value="">Seleccione un departamento</option>
+                </select>
+            </div>
+            
+            <!-- Botón para Agregar Subproducto -->
+            <div class="form-row">
+                <button type="button" class="btn btn-primary" onclick="mostrarFormularioSubproducto()">Agregar Subproducto</button>
+            </div>
 
             <div id="subproductosContainer">
                 <h3>Subproductos</h3>
-                <button type="button" onclick="agregarSubproducto()">Agregar Subproducto</button>
+                <ul id="listaSubproductos">
+                    <!-- Aquí se agregarán los subproductos seleccionados -->
+                </ul>
+            </div>
+            
+            <br>
+            <div class="form-actions">
+                <button class="btn btn-primary" type="button" onclick="crearProductoCompuesto()">Crear Producto Compuesto</button>
             </div>
 
-            <button type="button" onclick="crearProductoCompuesto()">Crear Producto Compuesto</button>
+            <p id="responseMessage"></p>
         </form>
 
-        <!-- Mensajes de Respuesta -->
-        <p id="responseMessage"></p>
+        <!-- Formulario para Agregar Subproducto -->
+        <div id="formSubproducto" style="display:none;">
+            <h3>Agregar Subproducto</h3>
+
+            <div class="form-row">
+                <label for="buscarSubproducto">Buscar Subproducto</label>
+                <input type="text" id="buscarSubproducto" placeholder="Buscar por nombre..." oninput="buscarSubproductoPorNombre()">
+                <ul id="resultadosBusqueda" style="display:none; list-style-type: none; padding: 0;"></ul>
+            </div>
+
+            <div class="form-row">
+                <label for="cantidadSubproducto">Cantidad</label>
+                <input type="number" id="cantidadSubproducto" min="1" value="1">
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-primary" onclick="agregarSubproducto()">Confirmar</button>
+                <button type="button" class="btn btn-secondary" onclick="cancelarAgregarSubproducto()">Cancelar</button>
+            </div>
+        </div>
+
+
+
+
+
+        
     </div>
 
     <!-- Modal para Buscar Producto -->
+    <div class="overlay" id="overlay" style="display:none;" ></div>
     <div id="modalBuscarProducto" class="modal" style="display:none;">
         <div class="modal-content">
             <span class="close" onclick="cerrarModalBuscarProducto()">&times;</span>
@@ -107,16 +150,15 @@
                         <th>Nombre</th>
                         <th>Precio Costo</th>
                         <th>Precio Venta</th>
+                        <th>Departamento</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    
                 </tbody>
             </table>
         </div>
     </div>
-
 
     <script src="/js/productosC.js"></script>
 </body>

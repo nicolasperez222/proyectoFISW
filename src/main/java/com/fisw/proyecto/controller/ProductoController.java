@@ -70,11 +70,26 @@ public class ProductoController {
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Producto actualizarCategoria(@PathVariable Integer id, @RequestBody Producto producto) {
-        if (!categoriaRepository.existsById(id)) {
-            throw new RuntimeException("Producto no encontrada");
+    public Producto actualizarProducto(@PathVariable Integer id, @RequestBody Producto producto, @RequestParam(required = false) Integer categoriaId) {
+        
+        Producto productoExistente = productoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+
+        productoExistente.setNombre(producto.getNombre());
+        productoExistente.setPrecioCosto(producto.getPrecioCosto());
+        productoExistente.setPrecioVenta(producto.getPrecioVenta());
+
+
+        if (categoriaId != null) {
+            Categoria categoria = categoriaRepository.findById(categoriaId)
+                    .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
+            productoExistente.setCategoria(categoria);
+        }else{
+            productoExistente.setCategoria(null);
         }
-        producto.setId(id);
-        return productoRepository.save(producto);
+
+        return productoRepository.save(productoExistente);
     }
+
+    
 }
