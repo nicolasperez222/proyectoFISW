@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Crear Producto</title>
+    <title>Gestión de Productos</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
@@ -12,16 +12,18 @@
         <div>
             <button onclick="window.location.href='/'">Volver</button>
         </div>
-        
-        <h1>Crear Producto</h1>
+
+        <h1>Gestión de Productos</h1>
         <div>
             <button type="button" onclick="mostrarFormulario('simple')">Producto Simple</button>
             <button type="button" onclick="mostrarFormulario('compuesto')">Producto Compuesto</button>
         </div>
-        
+
         <!-- Formulario para Producto Simple -->
-        <form id="createProductFormSimple" style="display:none;">
+        <form id="createProductFormSimple">
             <h2>Producto Simple</h2>
+            <button type="button" onclick="buscar()">Buscar Producto</button><br>
+
             <label for="nombreSimple">Nombre del Producto</label>
             <input type="text" id="nombreSimple" name="nombreSimple" required>
 
@@ -37,11 +39,17 @@
             </select>
 
             <button type="button" onclick="crearProductoSimple()">Crear Producto Simple</button>
+            <div id="modificar">
+                <button type="button" onclick="crearProductoSimple()">Actualizar Producto</button>
+                <button type="button" onclick="crearProductoSimple()">Cancelar</button>
+            </div>
+            
         </form>
-        
+
         <!-- Formulario para Producto Compuesto -->
         <form id="createProductFormCompuesto" style="display:none;">
             <h2>Producto Compuesto</h2>
+
             <label for="nombreCompuesto">Nombre del Producto</label>
             <input type="text" id="nombreCompuesto" name="nombreCompuesto" required>
 
@@ -57,12 +65,40 @@
                 <h3>Subproductos</h3>
                 <button type="button" onclick="agregarSubproducto()">Agregar Subproducto</button>
             </div>
-            
+
             <button type="button" onclick="crearProductoCompuesto()">Crear Producto Compuesto</button>
         </form>
-        
+
+        <!-- Mensajes de Respuesta -->
         <p id="responseMessage"></p>
     </div>
+
+    <!-- Modal para Buscar Producto -->
+    <div id="modalBuscarProducto" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close" onclick="cerrarModalBuscarProducto()">&times;</span>
+            <h2>Buscar Producto</h2>
+            <div>
+                <label for="filtroProducto">Buscar Producto:</label>
+                <input type="text" id="filtroProducto" placeholder="Escribe el nombre del producto" oninput="filtrarProductos()">
+            </div>
+            <table id="tablaProductos">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Precio Costo</th>
+                        <th>Precio Venta</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                </tbody>
+            </table>
+        </div>
+    </div>
+
 
     <script src="/js/productosC.js"></script>
 </body>
