@@ -660,25 +660,20 @@ async function seleccionarProductoC(idProducto, nombre, precioBase, idCategoria)
 
         const productoCompuesto = await response.json();
 
-        // Llenar el formulario con los datos del producto compuesto
         document.getElementById('nombreCompuesto').value = productoCompuesto.nombre || nombre;
         document.getElementById('precioBase').value = productoCompuesto.precioBase || precioBase;
         document.getElementById('categoriaCompuesto').value = productoCompuesto.categoria?.id || idCategoria;
 
-        // Cargar los subproductos en subproductosSeleccionados
         subproductosSeleccionados = productoCompuesto.subproductos.map(subWrapper => ({
             id: subWrapper.subproducto.id,
             nombre: subWrapper.subproducto.nombre,
             cantidad: subWrapper.cantidad,
         }));
 
-        // Actualizar la lista visual de subproductos
         actualizarListaSubproductos();
 
-        // Mostrar el formulario
         document.getElementById('createProductFormCompuesto').style.display = 'block';
 
-        // Mostrar botones de actualizar y cancelar
         document.getElementById('actualizarCompuesto').style.display = 'inline-block';
         document.getElementById('cancelarEdicionCompuesto').style.display = 'inline-block';
         document.getElementById('nombreCompuesto').focus();
@@ -727,7 +722,6 @@ function actualizarListaSubproductos() {
 
 
 function eliminarSubproducto(index) {
-    // Eliminar el subproducto de la lista
     subproductosSeleccionados.splice(index, 1);
     actualizarListaSubproductos();
 }
@@ -735,12 +729,10 @@ function eliminarSubproducto(index) {
 function editarSubproducto(index) {
     const subproducto = subproductosSeleccionados[index];
 
-    // Mostrar el formulario de edición con los datos del subproducto
     document.getElementById('formSubproducto').style.display = 'block';
     document.getElementById('buscarSubproducto').value = subproducto.nombre;
     document.getElementById('cantidadSubproducto').value = subproducto.cantidad;
 
-    // Guardar el índice en un atributo para confirmar la edición
     document.getElementById('formSubproducto').dataset.index = index;
 }
 
@@ -756,14 +748,9 @@ function confirmarEdicionSubproducto() {
     subproductosSeleccionados[index].cantidad = cantidad;
     actualizarListaSubproductos();
 
-    // Ocultar el formulario de edición
     document.getElementById('formSubproducto').style.display = 'none';
     mostrarMensaje('Subproducto editado correctamente.', 'success');
 }
-
-
-
-
 
 async function actualizarProductoCompuesto() {
 
