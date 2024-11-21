@@ -86,6 +86,17 @@ public class ProductoCompuestoController {
         return ResponseEntity.notFound().build();
     }
 
+    @DeleteMapping("/eliminar/{id}")
+    public ResponseEntity<Void> eliminarProductoCompuesto(@PathVariable Integer id) {
+        Optional<ProductoCompuesto> productoExistente = productoCompuestoRepository.findById(id);
+        if (!productoExistente.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+        productoCompuestoRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+
     @PutMapping("/actualizar/{id}")
     public ResponseEntity<ProductoCompuesto> actualizarProductoCompuesto(@PathVariable Integer id, @RequestBody ProductoCompuesto productoCompuesto) {
         Optional<ProductoCompuesto> productoExistente = productoCompuestoRepository.findById(id);
