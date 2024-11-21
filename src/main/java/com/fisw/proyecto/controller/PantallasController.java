@@ -21,4 +21,8 @@ public class PantallasController {
     public String crearCategoria() {
         return "categoria";
     }
+    @GetMapping("pedido/crear")
+    public String crearPedido() {
+        return "pedido";
+    }
 }
