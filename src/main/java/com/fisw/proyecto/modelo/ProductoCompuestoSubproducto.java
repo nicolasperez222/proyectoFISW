@@ -14,7 +14,7 @@ public class ProductoCompuestoSubproducto {
     private Integer id;
 
     @ManyToOne
-    @JsonBackReference // Esto evita la serialización del lado inverso (de ProductoCompuesto)
+    @JsonBackReference
     private ProductoCompuesto productoCompuesto;
 
     @ManyToOne

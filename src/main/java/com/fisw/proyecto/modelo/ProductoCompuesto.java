@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import java.util.ArrayList;
 import java.util.List;
-import com.fasterxml.jackson.annotation.JsonManagedReference; // Agregar para evitar recursión en ProductoCompuesto
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Data
@@ -20,8 +20,11 @@ public class ProductoCompuesto {
     @ManyToOne
     private Categoria categoria;
 
-    // Evitar la serialización recursiva de subproductos
+    @ManyToOne
+    @JoinColumn(name = "pedido_id")
+    private Pedido pedido;
+
     @OneToMany(mappedBy = "productoCompuesto", cascade = CascadeType.ALL)
-    @JsonManagedReference // Esto marca la relación en el lado de "ProductoCompuesto"
+    @JsonManagedReference
     private List<ProductoCompuestoSubproducto> subproductos = new ArrayList<>();
 }

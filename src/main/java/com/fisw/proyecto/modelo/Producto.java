@@ -22,8 +22,11 @@ public class Producto {
     @JoinColumn(name = "categoria_id", nullable = true)
     private Categoria categoria;
 
-    // Evitar que se serialice la lista de productos compuestos (para prevenir recursión infinita)
     @OneToMany(mappedBy = "subproducto")
-    @JsonIgnore // Esto previene la serialización del lado inverso
+    @JsonIgnore
     private List<ProductoCompuestoSubproducto> productosCompuestos = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "pedido_id")
+    private Pedido pedido;
 }
