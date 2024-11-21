@@ -55,7 +55,7 @@
 
             <div id="modificar" class="form-actions actualizar" style="display:none;">
                 <button class="btn btn-warning" type="button" onclick="actualizarProducto()">Actualizar Producto</button>
-                <button class="btn btn-danger" type="button" onclick="cancelarEdicion()">Cancelar</button>
+                <button class="btn btn-danger" type="button" onclick="cancelarEdicionS()">Cancelar</button>
             </div>
            
         </form>
@@ -123,33 +123,34 @@
 
          <!-- Mensajes de Respuesta -->
          <p id="responseMessage" style="display:none;"></p>
-
     </div>
 
     <!-- Modal para Buscar Producto -->
     <div class="overlay" id="overlay" style="display:none;" ></div>
     <div id="modalBuscarProducto" class="modal" style="display:none;">
-        <div class="modal-content">
+        <div class="modal-content" >
             <span class="close" onclick="cerrarModalBuscarProducto()">&times;</span>
             <h2>Buscar Producto</h2>
             <div>
                 <label for="filtroProducto">Buscar Producto:</label>
                 <input type="text" id="filtroProducto" placeholder="Escribe el nombre del producto" oninput="filtrarProductos()">
             </div>
-            <table id="tablaProductos">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Precio Costo</th>
-                        <th>Precio Venta</th>
-                        <th>Departamento</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
+            <div class="table-container">
+                <table id="tablaProductos" >
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Precio Costo</th>
+                            <th>Precio Venta</th>
+                            <th>Departamento</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -163,19 +164,21 @@
                 <label for="filtroProductoC">Buscar Producto:</label>
                 <input type="text" id="filtroProductoC" placeholder="Escribe el nombre del producto" oninput="filtrarProductosCompuesto()">
             </div>
-            <table id="tablaProductosC">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Precio Venta</th>
-                        <th>Departamento</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
+            <div class="table-container">
+                <table id="tablaProductosC">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Precio Venta</th>
+                            <th>Departamento</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 

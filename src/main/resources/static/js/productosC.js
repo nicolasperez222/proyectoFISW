@@ -104,12 +104,6 @@ function seleccionarProducto(id, nombre, precioCosto, precioVenta, categoriaId) 
 }
 
 
-// Función para cancelar la edición del producto
-function cancelarEdicion() {
-    document.getElementById('createProductFormSimple').reset();
-    document.getElementById('modificar').style.display = 'none';
-    delete document.getElementById('createProductFormSimple').dataset.productId;
-}
 
 // Función para buscar productos
 async function buscar() {
@@ -274,7 +268,7 @@ async function actualizarProducto() {
         }, 3000);
 
 
-        cancelarEdicion();
+        cancelarEdicionS();
 
     } catch (error) {
         console.error('Error al actualizar el producto:', error);
@@ -286,7 +280,7 @@ async function actualizarProducto() {
 
 
 // Función para cancelar la edición del producto
-function cancelarEdicion() {
+function cancelarEdicionS() {
     document.getElementById('createProductFormSimple').reset();
 
     document.getElementById('modificar').style.display = 'none';

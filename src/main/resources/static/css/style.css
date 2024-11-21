@@ -132,12 +132,15 @@ button:hover, .btn:hover {
     border: 1px solid #F5C6CB;
 }
 
-/* Tablas */
+/* Contenedor de la tabla con scroll horizontal */
 .table-container {
     margin-top: 30px;
-    overflow-x: auto;
+    overflow-x: auto; /* Permitir desplazamiento horizontal */
+    max-width: 100%;  /* Ajustarse al ancho de la pantalla */
+    white-space: nowrap; /* Prevenir que el contenido se divida en múltiples líneas */
 }
 
+/* Tabla */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -167,7 +170,7 @@ tbody tr:hover {
     cursor: pointer;
 }
 
-/* Modal y fondo desenfocado */
+
 .overlay {
     position: fixed;
     top: 0;
@@ -217,6 +220,7 @@ tbody tr:hover {
 .modal .close:hover {
     color: #b21f2d;
 }
+
 
 /* Responsive */
 @media (max-width: 768px) {
@@ -287,3 +291,45 @@ tbody tr:hover {
 .btn-container button {
     margin-left: 10px;
 }
+
+/* Tabla en los modales */
+/* Contenedor de la tabla con scroll vertical dentro de los modales */
+.modal .table-container {
+    margin-top: 20px;
+    overflow-y: auto;
+    max-height: 400px; 
+    width: 100%;
+}
+
+/* Tabla en los modales */
+#modalBuscarProducto table, #modalBuscarProductoCompuesto table {
+    width: 100%; 
+    border-collapse: collapse;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+#modalBuscarProducto th, #modalBuscarProductoCompuesto th,
+#modalBuscarProducto td, #modalBuscarProductoCompuesto td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+#modalBuscarProducto th, #modalBuscarProductoCompuesto th {
+    background-color: #3498DB;
+    color: #ffffff;
+    text-transform: uppercase;
+}
+
+#modalBuscarProducto tbody tr:nth-child(even), 
+#modalBuscarProductoCompuesto tbody tr:nth-child(even) {
+    background-color: #F4F6F7;
+}
+
+#modalBuscarProducto tbody tr:hover, 
+#modalBuscarProductoCompuesto tbody tr:hover {
+    background-color: #D5DBDB;
+    cursor: pointer;
+}
+
