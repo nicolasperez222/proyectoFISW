@@ -342,7 +342,7 @@ function limpiarFormularioProductoCompuesto() {
     document.getElementById("nombreCompuesto").value = "";
     document.getElementById("precioBase").value = "";
     document.getElementById("categoriaCompuesto").selectedIndex = 0;
-
+    idPM = null;
     const listaSubproductos = document.getElementById("listaSubproductos");
     listaSubproductos.innerHTML = ""; 
 
@@ -558,26 +558,43 @@ function cerrarModalBuscarProductoCompuesto() {
 }
 
 async function filtrarProductosCompuesto() {
-    const filtro = document.getElementById('filtroProducto').value.toLowerCase(); 
+    const filtro = document.getElementById('filtroProductoC').value.trim(); 
     const tbody = document.querySelector('#tablaProductosC tbody');
 
-    try {
+    // Validar filtro vacío
+    if (!filtro) {
+        console.warn('El campo de filtro está vacío.');
+        mostrarMensaje('Por favor ingrese un término de búsqueda.', 'error');
+        return;
+    }
 
-        const response = await fetch(`/producto-compuesto/buscar?filtro=${filtro}`);
+    // Mostrar indicador de carga
+    tbody.innerHTML = '<tr><td colspan="5">Cargando...</td></tr>';
+
+    try {
+        const response = await fetch(`/producto-compuesto/buscar?filtro=${encodeURIComponent(filtro)}`);
+        
+        if (!response.ok) throw new Error('Error al realizar la búsqueda');
+
         const productos = await response.json();
 
         tbody.innerHTML = '';
+
+        if (productos.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5">No se encontraron productos.</td></tr>';
+            return;
+        }
 
         productos.forEach(producto => {
             const row = document.createElement('tr');
 
             row.innerHTML = `
-                <td>${producto.id}</td>
-                <td>${producto.nombre}</td>
-                <td>${producto.precioBase}</td>
-                <td>${producto.categoria ? producto.categoria.nombre : 'Sin categoría'}</td>
+                <td>${producto.id || 'N/A'}</td>
+                <td>${producto.nombre || 'Sin nombre'}</td>
+                <td>${producto.precioBase != null ? producto.precioBase : 'N/A'}</td>
+                <td>${producto.categoria?.nombre || 'Sin categoría'}</td>
                 <td>
-                    <button onclick="seleccionarProducto(${producto.id}, '${producto.nombre}', ${producto.precioVenta}, ${producto.categoria ? producto.categoria.id : null})">Seleccionar</button>
+                    <button onclick="seleccionarProductoC(${producto.id}, '${producto.nombre}', ${producto.precioBase || 0}, ${producto.categoria?.id || null})">Seleccionar</button>
                     <button class="btn btn-danger" onclick="eliminarProducto(${producto.id})">Eliminar</button>
                 </td>
             `;
@@ -585,8 +602,10 @@ async function filtrarProductosCompuesto() {
         });
     } catch (error) {
         console.error('Error al filtrar productos:', error);
+        tbody.innerHTML = '<tr><td colspan="5">Hubo un problema al buscar productos.</td></tr>';
     }
 }
+
 
 // Función para llenar la tabla con productos
 function llenarTablaProductosCompuesto(productos) {
@@ -601,7 +620,7 @@ function llenarTablaProductosCompuesto(productos) {
             <td>${producto.precioBase}</td>
             <td>${producto.categoria ? producto.categoria.nombre : 'Sin categoría'}</td>
             <td>
-                <button onclick="seleccionarProducto(${producto.id}, '${producto.nombre}', ${producto.precioVenta}, ${producto.categoria ? producto.categoria.id : null})">Seleccionar</button>
+                <button onclick="seleccionarProductoC(${producto.id}, '${producto.nombre}', ${producto.precioVenta}, ${producto.categoria ? producto.categoria.id : null})">Seleccionar</button>
                 <button class="btn btn-danger" onclick="eliminarProducto(${producto.id})">Eliminar</button>
             </td>
         `;
@@ -610,18 +629,163 @@ function llenarTablaProductosCompuesto(productos) {
 }
 
 // Función para seleccionar un producto desde la tabla de búsqueda
-function seleccionarProducto(id, nombre, precioCosto, precioVenta, categoriaId) {
-    document.getElementById('nombreSimple').value = nombre;
-    document.getElementById('precioCostoSimple').value = precioCosto;
-    document.getElementById('precioVentaSimple').value = precioVenta;
+var idPM;
+async function seleccionarProductoC(idProducto, nombre, precioBase, idCategoria) {
+    try {
+        idPM = idProducto;
+        cerrarModalBuscarProductoCompuesto();
+        const response = await fetch(`/producto-compuesto/${idProducto}`);
+        if (!response.ok) throw new Error('Error al obtener el producto compuesto');
 
-    const form = document.getElementById('createProductFormSimple');
-    form.dataset.productId = id;
+        const productoCompuesto = await response.json();
 
-    const categoriaSelect = document.getElementById('categoriaSimple');
-    categoriaSelect.value = categoriaId ? categoriaId : '';
+        // Llenar el formulario con los datos del producto compuesto
+        document.getElementById('nombreCompuesto').value = productoCompuesto.nombre || nombre;
+        document.getElementById('precioBase').value = productoCompuesto.precioBase || precioBase;
+        document.getElementById('categoriaCompuesto').value = productoCompuesto.categoria?.id || idCategoria;
 
-    document.getElementById('crearSimple').style.display = 'none';
-    document.getElementById('modificar').style.display = 'inline-block';
-    cerrarModalBuscarProducto();
+        // Cargar los subproductos en subproductosSeleccionados
+        subproductosSeleccionados = productoCompuesto.subproductos.map(subWrapper => ({
+            id: subWrapper.subproducto.id,
+            nombre: subWrapper.subproducto.nombre,
+            cantidad: subWrapper.cantidad,
+        }));
+
+        // Actualizar la lista visual de subproductos
+        actualizarListaSubproductos();
+
+        // Mostrar el formulario
+        document.getElementById('createProductFormCompuesto').style.display = 'block';
+
+        // Mostrar botones de actualizar y cancelar
+        document.getElementById('actualizarCompuesto').style.display = 'inline-block';
+        document.getElementById('cancelarEdicionCompuesto').style.display = 'inline-block';
+        
+    } catch (error) {
+        console.error('Error al seleccionar el producto compuesto:', error);
+        mostrarMensaje('Hubo un error al cargar el producto compuesto.', 'error');
+    }
+}
+
+
+function actualizarListaSubproductos() {
+    const listaSubproductos = document.getElementById('listaSubproductos');
+    listaSubproductos.innerHTML = ''; // Limpiar la lista actual
+
+    subproductosSeleccionados.forEach((subproducto, index) => {
+        const li = document.createElement('li');
+        li.textContent = `${subproducto.nombre} - Cantidad: ${subproducto.cantidad}`;
+        li.dataset.index = index;
+
+        // Botón Eliminar
+        const btnEliminar = document.createElement('button');
+        btnEliminar.textContent = 'Eliminar';
+        btnEliminar.className = 'btn btn-danger';
+        btnEliminar.onclick = () => eliminarSubproducto(index);
+
+        // Botón Editar
+        const btnEditar = document.createElement('button');
+        btnEditar.textContent = 'Editar';
+        btnEditar.className = 'btn btn-warning';
+        btnEditar.onclick = () => editarSubproducto(index);
+
+        li.appendChild(btnEliminar);
+        li.appendChild(btnEditar);
+
+        listaSubproductos.appendChild(li);
+    });
+}
+
+function eliminarSubproducto(index) {
+    // Eliminar el subproducto de la lista
+    subproductosSeleccionados.splice(index, 1);
+    actualizarListaSubproductos();
+}
+
+function editarSubproducto(index) {
+    const subproducto = subproductosSeleccionados[index];
+
+    // Mostrar el formulario de edición con los datos del subproducto
+    document.getElementById('formSubproducto').style.display = 'block';
+    document.getElementById('buscarSubproducto').value = subproducto.nombre;
+    document.getElementById('cantidadSubproducto').value = subproducto.cantidad;
+
+    // Guardar el índice en un atributo para confirmar la edición
+    document.getElementById('formSubproducto').dataset.index = index;
+}
+
+function confirmarEdicionSubproducto() {
+    const index = parseInt(document.getElementById('formSubproducto').dataset.index, 10);
+    const cantidad = parseInt(document.getElementById('cantidadSubproducto').value, 10);
+
+    if (isNaN(cantidad) || cantidad <= 0) {
+        alert('Por favor, ingrese una cantidad válida mayor que 0.');
+        return;
+    }
+
+    subproductosSeleccionados[index].cantidad = cantidad;
+    actualizarListaSubproductos();
+
+    // Ocultar el formulario de edición
+    document.getElementById('formSubproducto').style.display = 'none';
+    mostrarMensaje('Subproducto editado correctamente.', 'success');
+}
+
+
+function cancelarEdicionCompuesto() {
+    document.getElementById('createProductFormCompuesto').style.display = 'none';
+    document.getElementById('nombreCompuesto').value = '';
+    document.getElementById('precioBase').value = '';
+    document.getElementById('categoriaCompuesto').value = '';
+    
+    subproductosSeleccionados = [];
+    actualizarListaSubproductos();
+    idPM = null;
+
+    document.getElementById('actualizarCompuesto').style.display = 'none';
+    document.getElementById('cancelarEdicionCompuesto').style.display = 'none';
+}
+
+async function actualizarProductoCompuesto() {
+    const nombreCompuesto = document.getElementById('nombreCompuesto').value;
+    const precioBase = parseFloat(document.getElementById('precioBase').value);
+    const categoriaCompuesto = document.getElementById('categoriaCompuesto').value;
+
+    const subproductosActualizados = subproductosSeleccionados.map(subproducto => ({
+        subproducto: { id: subproducto.id }, 
+        cantidad: subproducto.cantidad,  
+    }));
+
+    const productoCompuestoActualizado = {
+        nombre: nombreCompuesto,
+        precioBase: precioBase,
+        categoria: { id: categoriaCompuesto }, 
+        categoria: categoriaCompuesto ? { id: parseInt(categoriaCompuesto, 10) } : null, 
+        subproductos: subproductosActualizados
+    };
+
+    try {
+        const response = await fetch(`/producto-compuesto/actualizar/${idPM}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(productoCompuestoActualizado)
+        });
+
+        if (!response.ok) {
+            throw new Error('Error al actualizar el producto compuesto');
+        }
+
+        const productoCompuesto = await response.json();
+        console.log('Producto compuesto actualizado:', productoCompuesto);
+
+        mostrarMensaje('Producto compuesto actualizado correctamente', 'success');
+        
+
+        limpiarFormularioProductoCompuesto();
+    } catch (error) {
+        console.error('Error al actualizar el producto compuesto:', error);
+        mostrarMensaje('Hubo un error al actualizar el producto compuesto.', 'error');
+    }
 }
