@@ -105,8 +105,6 @@ public class ProductoCompuestoController {
         }
 
         ProductoCompuesto productoACtual = productoExistente.get();
-
-        // Actualizar el nombre si está presente
         if (productoCompuesto.getNombre() != null && !productoCompuesto.getNombre().trim().isEmpty()) {
             productoACtual.setNombre(productoCompuesto.getNombre().trim());
         }
