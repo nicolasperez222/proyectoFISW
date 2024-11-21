@@ -1,113 +1,293 @@
-document.addEventListener("DOMContentLoaded", function () {
-    // Variables globales
-    const productosPedidoList = document.getElementById("productosPedido");
-    const productosInput = document.getElementById("producto");
-    const agregarProductoBtn = document.getElementById("agregarProductoBtn");
-    const confirmacionSimpleModal = document.getElementById("confirmacionSimple");
-    const confirmacionCompuestoModal = document.getElementById("confirmacionCompuesto");
-    const cantidadSimpleInput = document.getElementById("cantidadSimple");
-    const subproductosList = document.getElementById("subproductosList");
 
-    let productos = []; // Para almacenar los productos disponibles
-    let productoSeleccionado = null;
+let subproductosSeleccionadosSimple = [];
+let simpleEditando = null;
 
-    // Establecer fecha por defecto
-    const fechaInput = document.getElementById("fecha");
-    const fechaActual = new Date();
-    fechaInput.value = fechaActual.toISOString().slice(0, 16);
+let subproductosSeleccionados = [];
+let subproductoEditando = null;
 
-    // Simular API de productos (para pruebas)
-    productos = [
-        { id: 1, nombre: "Pizza", subproductos: [{ nombre: "Queso" }, { nombre: "Pepperoni" }] },
-        { id: 2, nombre: "Hamburguesa", subproductos: [] },
-        { id: 3, nombre: "Pasta", subproductos: [{ nombre: "Salsa Alfredo" }, { nombre: "Pollo" }] },
-    ];
-    actualizarDatalist();
+async function buscarSimplePorNombre() {
+    const query = document.getElementById('buscarSimple').value;
+    if (query.length < 2) {
+        document.getElementById('resultadosBusqueda').style.display = 'none';
+        return;
+    }
 
-    // Actualiza el datalist con los productos disponibles
-    function actualizarDatalist() {
-        const datalist = document.getElementById("productos");
-        datalist.innerHTML = ""; // Limpiar datalist
-        productos.forEach((producto) => {
-            const option = document.createElement("option");
-            option.value = producto.nombre; // Nombre del producto como opción
-            option.dataset.id = producto.id;
-            datalist.appendChild(option);
+    try {
+        const response = await fetch(`/producto/buscar?filtro=${query}`);
+        const productos = await response.json();
+        const listaResultados = document.getElementById('resultadosBusqueda');
+        listaResultados.innerHTML = '';
+
+        productos.forEach(producto => {
+            const item = document.createElement('li');
+            item.textContent = producto.nombre;
+            item.setAttribute('data-id', producto.id); 
+            item.style.cursor = 'pointer';
+            item.onclick = () => {
+                document.getElementById('buscarSimple').value = producto.nombre;
+                document.getElementById('buscarSimple').dataset.id = producto.id;
+
+                document.getElementById('productoSimple').value = producto.nombre;
+                document.getElementById('productoSimple').dataset.id = producto.id;
+
+                listaResultados.style.display = 'none'; 
+                document.getElementById('confirmacionSimple').style.display = 'block';
+            };
+            listaResultados.appendChild(item);
         });
+
+        listaResultados.style.display = productos.length > 0 ? 'block' : 'none';
+
+    } catch (error) {
+        console.error('Error al buscar subproductos:', error);
+    }
+}
+
+
+
+async function confirmarSimple() {
+    const nombreSubproducto = document.getElementById('productoSimple').value;
+    const idSubproducto = document.getElementById('productoSimple').dataset.id;
+    const cantidadSubproducto = parseInt(document.getElementById('cantidadSimple').value, 10); 
+
+    if (isNaN(cantidadSubproducto) || cantidadSubproducto <= 0) {
+        alert('Por favor, ingrese una cantidad válida mayor que 0.');
+        return;
     }
 
-    // Evento para agregar producto al pedido
-    agregarProductoBtn.addEventListener("click", function () {
-        const productoNombre = productosInput.value.trim();
-        if (!productoNombre) {
-            alert("Por favor, selecciona un producto.");
-            return;
-        }
+    if (nombreSubproducto.trim() === '') {
+        alert('Por favor, ingrese un nombre válido para el subproducto.');
+        return;
+    }
 
-        productoSeleccionado = productos.find((producto) => producto.nombre === productoNombre);
-        if (!productoSeleccionado) {
-            alert("Producto no encontrado");
-            return;
-        }
+    const subproducto = {
+        nombre: nombreSubproducto,
+        cantidad: cantidadSubproducto,
+        id: parseInt(idSubproducto, 10)
+    };
 
-        // Si es un producto compuesto
-        if (productoSeleccionado.subproductos && productoSeleccionado.subproductos.length > 0) {
-            mostrarModalConfirmacionCompuesto();
-        } else {
-            mostrarModalConfirmacionSimple();
-        }
+    const indexExistente = subproductosSeleccionadosSimple.findIndex(sub => sub.nombre === subproducto.nombre);
+
+    if (indexExistente >= 0) {
+        subproductosSeleccionadosSimple[indexExistente].cantidad = cantidadSubproducto;
+    } else {
+        subproductosSeleccionadosSimple.push(subproducto);
+    }
+
+    actualizarListaSimple();
+    document.getElementById('buscarSubproducto').value = '';
+    document.getElementById('cantidadSimple').value = 1;
+    document.getElementById('productoSimple').value = '';
+
+    document.getElementById('confirmacionSimple').style.display = 'none';
+}
+
+async function cancelarSimple(){
+    document.getElementById('buscarSubproducto').value = '';
+    document.getElementById('cantidadSimple').value = 1;
+    document.getElementById('productoSimple').value = '';
+
+    document.getElementById('confirmacionSimple').style.display = 'none';
+}
+
+
+function actualizarListaSimple() {
+    const listaSubproductos = document.getElementById('listaSimple');
+    listaSubproductos.innerHTML = '';
+
+    subproductosSeleccionadosSimple.forEach((subproducto, index) => {
+        const li = document.createElement('li');
+        li.className = 'subproducto-item';
+        li.dataset.index = index;
+
+        const texto = document.createElement('span');
+        texto.textContent = `${subproducto.nombre} - Cantidad: ${subproducto.cantidad}`;
+        texto.style.marginRight = '20px';
+
+        const btnContainer = document.createElement('div');
+        btnContainer.className = 'btn-container';
+
+        const btnEliminar = document.createElement('button');
+        btnEliminar.textContent = 'Eliminar';
+        btnEliminar.className = 'btn btn-danger btn-sm';
+        btnEliminar.onclick = () => eliminarSimple(index);
+
+        const btnEditar = document.createElement('button');
+        btnEditar.textContent = 'Editar';
+        btnEditar.className = 'btn btn-warning btn-sm';
+        btnEditar.onclick = () => editarSimple(index);
+
+        btnContainer.appendChild(btnEliminar);
+        btnContainer.appendChild(btnEditar);
+
+        li.appendChild(texto);
+        li.appendChild(btnContainer);
+
+        listaSubproductos.appendChild(li);
     });
+}
 
-    // Mostrar el modal para confirmar producto simple
-    function mostrarModalConfirmacionSimple() {
-        cantidadSimpleInput.value = 1; // Valor inicial
-        confirmacionSimpleModal.style.display = "flex";
+function eliminarSimple(index) {
+    subproductosSeleccionadosSimple.splice(index, 1);
+    actualizarListaSimple(); 
+}
+
+function editarSimple(index) {
+    simpleEditando = subproductosSeleccionadosSimple[index];
+
+    document.getElementById('confirmacionSimple').style.display = 'block';
+    document.getElementById('productoSimple').value = simpleEditando.nombre;
+    document.getElementById('cantidadSimple').value = simpleEditando.cantidad;
+}
+
+
+//PRODUCTOS COMPUESTOS
+
+
+async function buscarSubproductoPorNombre() {
+    const query = document.getElementById('buscarSubproducto').value;
+    if (query.length < 3) {
+        document.getElementById('resultadosBusqueda').style.display = 'none';
+        return;
     }
 
-    // Mostrar el modal para confirmar producto compuesto
-    function mostrarModalConfirmacionCompuesto() {
-        subproductosList.innerHTML = ""; // Limpiar subproductos
-        productoSeleccionado.subproductos.forEach((subproducto) => {
-            const li = document.createElement("li");
-            li.textContent = subproducto.nombre;
-            subproductosList.appendChild(li);
+    try {
+        const response = await fetch(`/producto/buscar?filtro=${query}`);
+        const productos = await response.json();
+        const listaResultados = document.getElementById('resultadosBusqueda');
+        listaResultados.innerHTML = '';
+
+        productos.forEach(producto => {
+            const item = document.createElement('li');
+            item.textContent = producto.nombre;
+            item.setAttribute('data-id', producto.id); 
+            item.style.cursor = 'pointer';
+            item.onclick = () => {
+                document.getElementById('buscarSubproducto').value = producto.nombre;
+                document.getElementById('buscarSubproducto').dataset.id = producto.id;
+                listaResultados.style.display = 'none'; 
+            };
+            listaResultados.appendChild(item);
         });
-        confirmacionCompuestoModal.style.display = "flex";
+
+        listaResultados.style.display = productos.length > 0 ? 'block' : 'none';
+    } catch (error) {
+        console.error('Error al buscar subproductos:', error);
+    }
+}
+
+function agregarSubproducto() {
+    const nombreSubproducto = document.getElementById('buscarSubproducto').value;
+    const idSubproducto = document.getElementById('buscarSubproducto').dataset.id;
+    const cantidadSubproducto = parseInt(document.getElementById('cantidadSubproducto').value, 10); 
+
+    if (isNaN(cantidadSubproducto) || cantidadSubproducto <= 0) {
+        alert('Por favor, ingrese una cantidad válida mayor que 0.');
+        return;
     }
 
-    // Confirmar cantidad para producto simple
-    document.getElementById("confirmarSimpleBtn").addEventListener("click", function () {
-        const cantidad = parseInt(cantidadSimpleInput.value);
-        if (cantidad <= 0) {
-            alert("La cantidad debe ser mayor que 0");
+    if (nombreSubproducto.trim() === '') {
+        alert('Por favor, ingrese un nombre válido para el subproducto.');
+        return;
+    }
+
+    const subproducto = {
+        nombre: nombreSubproducto,
+        cantidad: cantidadSubproducto,
+        id: parseInt(idSubproducto, 10)
+    };
+
+    const indexExistente = subproductosSeleccionados.findIndex(sub => sub.nombre === subproducto.nombre);
+
+    if (indexExistente >= 0) {
+        subproductosSeleccionados[indexExistente].cantidad = cantidadSubproducto;
+    } else {
+        subproductosSeleccionados.push(subproducto);
+    }
+
+    actualizarListaSubproductos();
+    document.getElementById('buscarSubproducto').value = '';
+    document.getElementById('cantidadSubproducto').value = 1;
+
+    document.getElementById('formSubproducto').style.display = 'none';
+}
+
+function cancelarAgregarSubproducto() {
+    document.getElementById('formSubproducto').style.display = 'none';
+    document.getElementById('buscarSubproducto').value = '';
+    document.getElementById('resultadosBusqueda').style.display = 'none';
+}
+
+var idPM;
+async function seleccionarProductoC(idProducto, nombre, precioBase, idCategoria) {
+    try {
+        idPM = idProducto;
+        cerrarModalBuscarProductoCompuesto();
+        const response = await fetch(`/producto-compuesto/${idProducto}`);
+        if (!response.ok) throw new Error('Error al obtener el producto compuesto');
+
+        const productoCompuesto = await response.json();
+
+        document.getElementById('nombreCompuesto').value = productoCompuesto.nombre || nombre;
+        document.getElementById('precioBase').value = productoCompuesto.precioBase || precioBase;
+        document.getElementById('categoriaCompuesto').value = productoCompuesto.categoria?.id || idCategoria;
+
+        subproductosSeleccionados = productoCompuesto.subproductos.map(subWrapper => ({
+            id: subWrapper.subproducto.id,
+            nombre: subWrapper.subproducto.nombre,
+            cantidad: subWrapper.cantidad,
+        }));
+
+        actualizarListaSubproductos();
+
+        document.getElementById('createProductFormCompuesto').style.display = 'block';
+
+        document.getElementById('actualizarCompuesto').style.display = 'inline-block';
+        document.getElementById('cancelarEdicionCompuesto').style.display = 'inline-block';
+        document.getElementById('nombreCompuesto').focus();
+    } catch (error) {
+        console.error('Error al seleccionar el producto compuesto:', error);
+        mostrarMensaje('Hubo un error al cargar el producto compuesto.', 'error');
+    }
+}
+
+async function buscarCompuestoPorNombre() {
+    const filtro = document.getElementById('buscarCompuesto').value.trim();
+    const listaResultados = document.getElementById('resultadosBusquedaCompuesto');
+
+
+    if (filtro.length < 3) {
+        listaResultados.style.display = 'none';
+        return;
+    }
+
+    try {
+        const response = await fetch(`/producto-compuesto/buscar?filtro=${encodeURIComponent(filtro)}`);
+        const productos = await response.json();
+
+        listaResultados.innerHTML = '';
+
+        if (productos.length === 0) {
+            listaResultados.style.display = 'none';
             return;
         }
 
-        productosPedidoList.innerHTML += `
-            <li>${productoSeleccionado.nombre} x${cantidad}</li>
-        `;
-        cerrarModal(confirmacionSimpleModal);
-    });
+        productos.forEach(producto => {
+            const item = document.createElement('li');
+            item.textContent = producto.nombre || 'Sin nombre';
+            item.setAttribute('data-id', producto.id);
+            item.style.cursor = 'pointer';
+            item.onclick = () => {
+                document.getElementById('buscarCompuesto').value = producto.nombre;
+                document.getElementById('buscarCompuesto').dataset.id = producto.id;
+                listaResultados.style.display = 'none';
+                document.getElementById('confirmacionCompuesto').style.display = 'block';
+            };
+            listaResultados.appendChild(item);
+        });
 
-    // Confirmar producto compuesto
-    document.getElementById("confirmarCompuestoBtn").addEventListener("click", function () {
-        productosPedidoList.innerHTML += `
-            <li>${productoSeleccionado.nombre} (compuesto)</li>
-        `;
-        cerrarModal(confirmacionCompuestoModal);
-    });
-
-    // Cerrar modales
-    document.getElementById("cerrarModalSimple").addEventListener("click", function () {
-        cerrarModal(confirmacionSimpleModal);
-    });
-
-    document.getElementById("cerrarModalCompuesto").addEventListener("click", function () {
-        cerrarModal(confirmacionCompuestoModal);
-    });
-
-    // Función para cerrar un modal
-    function cerrarModal(modal) {
-        modal.style.display = "none";
+        listaResultados.style.display = 'block';
+    } catch (error) {
+        console.error('Error al filtrar productos compuestos:', error);
     }
-});
+}

@@ -797,12 +797,9 @@ async function actualizarProductoCompuesto() {
         }
 
         const productoCompuesto = await response.json();
-
         console.log('Producto compuesto actualizado:', productoCompuesto);
-
         mostrarMensaje('Producto compuesto actualizado correctamente', 'success');
         limpiarFormularioProductoCompuesto();
-
         document.getElementById('actualizarCompuesto').style.display = 'none';
         document.getElementById('cancelarEdicionCompuesto').style.display = 'none';
 
