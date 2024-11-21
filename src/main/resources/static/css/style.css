@@ -271,3 +271,19 @@ tbody tr:hover {
     background-color: #f1f1f1;
 }
 
+.subproducto-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd; 
+}
+
+.btn-container {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-container button {
+    margin-left: 10px;
+}

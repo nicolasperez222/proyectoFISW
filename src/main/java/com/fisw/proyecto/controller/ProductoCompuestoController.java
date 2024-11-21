@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -89,60 +90,59 @@ public class ProductoCompuestoController {
     public ResponseEntity<ProductoCompuesto> actualizarProductoCompuesto(@PathVariable Integer id, @RequestBody ProductoCompuesto productoCompuesto) {
         Optional<ProductoCompuesto> productoExistente = productoCompuestoRepository.findById(id);
         if (!productoExistente.isPresent()) {
-            return ResponseEntity.notFound().build(); 
+            return ResponseEntity.notFound().build();
         }
-    
+
         ProductoCompuesto productoACtual = productoExistente.get();
-    
-        // Actualizar la categoría si se proporciona una categoría válida
+
+        // Actualizar el nombre si está presente
+        if (productoCompuesto.getNombre() != null && !productoCompuesto.getNombre().trim().isEmpty()) {
+            productoACtual.setNombre(productoCompuesto.getNombre().trim());
+        }
+
+        if (productoCompuesto.getPrecioBase() > 0) {
+            productoACtual.setPrecioBase(productoCompuesto.getPrecioBase());
+        }
+        
         if (productoCompuesto.getCategoria() != null && productoCompuesto.getCategoria().getId() != null) {
             productoACtual.setCategoria(categoriaRepository.findById(productoCompuesto.getCategoria().getId()).orElse(null));
+        }else{
+            productoACtual.setCategoria(null);
         }
-    
-        // Crear una nueva lista para los subproductos
+
         List<ProductoCompuestoSubproducto> subproductosConCantidad = new ArrayList<>();
-    
-        // Iterar sobre los subproductos recibidos y asignar las cantidades
         for (ProductoCompuestoSubproducto subproducto : productoCompuesto.getSubproductos()) {
             Producto producto = productoRepository.findById(subproducto.getSubproducto().getId()).orElse(null);
             if (producto != null) {
                 if (subproducto.getCantidad() <= 0) {
-                    return ResponseEntity.badRequest().body(null); // Validación de cantidad
+                    return ResponseEntity.badRequest().body(null);
                 }
-    
+
                 subproducto.setProductoCompuesto(productoACtual);
                 subproducto.setSubproducto(producto);
-    
-                // Verificar si el subproducto ya existe en la lista actual (por ID del subproducto)
                 boolean subproductoExistente = false;
                 for (ProductoCompuestoSubproducto actualSubproducto : productoACtual.getSubproductos()) {
                     if (actualSubproducto.getSubproducto().getId().equals(subproducto.getSubproducto().getId())) {
-                        // Si existe, solo actualizamos la cantidad
                         actualSubproducto.setCantidad(subproducto.getCantidad());
                         subproductoExistente = true;
                         break;
                     }
                 }
-    
-                // Si el subproducto no existe, lo agregamos a la lista
+
                 if (!subproductoExistente) {
                     subproductosConCantidad.add(subproducto);
                 }
             } else {
-                return ResponseEntity.badRequest().body(null); // Producto no encontrado
+                return ResponseEntity.badRequest().body(null);
             }
         }
-    
-        // Reemplazar la lista de subproductos del producto compuesto con la nueva lista
-        productoACtual.setSubproductos(subproductosConCantidad);
-    
-        // Guardar el producto compuesto actualizado
-        productoCompuestoRepository.save(productoACtual);
-    
-        return ResponseEntity.ok(productoACtual); // Devolver el producto compuesto actualizado
-    }
-    
 
+        productoACtual.getSubproductos().clear();
+        productoACtual.getSubproductos().addAll(subproductosConCantidad);
+        productoCompuestoRepository.save(productoACtual);
+        
+        return ResponseEntity.ok(productoACtual);
+    }
 
 }
 

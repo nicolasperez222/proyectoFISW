@@ -670,31 +670,40 @@ async function seleccionarProductoC(idProducto, nombre, precioBase, idCategoria)
 
 function actualizarListaSubproductos() {
     const listaSubproductos = document.getElementById('listaSubproductos');
-    listaSubproductos.innerHTML = ''; // Limpiar la lista actual
+    listaSubproductos.innerHTML = ''; 
 
     subproductosSeleccionados.forEach((subproducto, index) => {
         const li = document.createElement('li');
-        li.textContent = `${subproducto.nombre} - Cantidad: ${subproducto.cantidad}`;
+        li.className = 'subproducto-item';
         li.dataset.index = index;
 
-        // Botón Eliminar
+        const texto = document.createElement('span');
+        texto.textContent = `${subproducto.nombre} - Cantidad: ${subproducto.cantidad}`;
+        texto.style.marginRight = '20px';
+
+        const btnContainer = document.createElement('div');
+        btnContainer.className = 'btn-container';
+
         const btnEliminar = document.createElement('button');
         btnEliminar.textContent = 'Eliminar';
-        btnEliminar.className = 'btn btn-danger';
+        btnEliminar.className = 'btn btn-danger btn-sm';
         btnEliminar.onclick = () => eliminarSubproducto(index);
 
-        // Botón Editar
         const btnEditar = document.createElement('button');
         btnEditar.textContent = 'Editar';
-        btnEditar.className = 'btn btn-warning';
+        btnEditar.className = 'btn btn-warning btn-sm';
         btnEditar.onclick = () => editarSubproducto(index);
 
-        li.appendChild(btnEliminar);
-        li.appendChild(btnEditar);
+        btnContainer.appendChild(btnEliminar);
+        btnContainer.appendChild(btnEditar);
+
+        li.appendChild(texto);
+        li.appendChild(btnContainer);
 
         listaSubproductos.appendChild(li);
     });
 }
+
 
 function eliminarSubproducto(index) {
     // Eliminar el subproducto de la lista
@@ -737,19 +746,34 @@ function cancelarEdicionCompuesto() {
     document.getElementById('nombreCompuesto').value = '';
     document.getElementById('precioBase').value = '';
     document.getElementById('categoriaCompuesto').value = '';
-    
+    document.getElementById('actualizarCompuesto').style.display = 'none';
+    document.getElementById('cancelarEdicionCompuesto').style.display = 'none';
+
     subproductosSeleccionados = [];
     actualizarListaSubproductos();
     idPM = null;
 
-    document.getElementById('actualizarCompuesto').style.display = 'none';
-    document.getElementById('cancelarEdicionCompuesto').style.display = 'none';
+    
 }
 
 async function actualizarProductoCompuesto() {
-    const nombreCompuesto = document.getElementById('nombreCompuesto').value;
+
+    const nombreCompuesto = document.getElementById('nombreCompuesto').value.trim();
     const precioBase = parseFloat(document.getElementById('precioBase').value);
     const categoriaCompuesto = document.getElementById('categoriaCompuesto').value;
+
+    if (!nombreCompuesto) {
+        mostrarMensaje('El nombre del producto compuesto es obligatorio.', 'error');
+        return;
+    }
+
+    if (isNaN(precioBase) || precioBase <= 0) {
+        mostrarMensaje('El precio base debe ser un número positivo.', 'error');
+        return;
+    }
+
+    console.log(nombreCompuesto + " " + precioBase + " ");
+    const categoria = categoriaCompuesto ? { id: parseInt(categoriaCompuesto, 10) } : null;
 
     const subproductosActualizados = subproductosSeleccionados.map(subproducto => ({
         subproducto: { id: subproducto.id }, 
@@ -759,8 +783,7 @@ async function actualizarProductoCompuesto() {
     const productoCompuestoActualizado = {
         nombre: nombreCompuesto,
         precioBase: precioBase,
-        categoria: { id: categoriaCompuesto }, 
-        categoria: categoriaCompuesto ? { id: parseInt(categoriaCompuesto, 10) } : null, 
+        categoria: categoria,
         subproductos: subproductosActualizados
     };
 
@@ -778,14 +801,17 @@ async function actualizarProductoCompuesto() {
         }
 
         const productoCompuesto = await response.json();
+
         console.log('Producto compuesto actualizado:', productoCompuesto);
 
         mostrarMensaje('Producto compuesto actualizado correctamente', 'success');
         
-
         limpiarFormularioProductoCompuesto();
+
     } catch (error) {
         console.error('Error al actualizar el producto compuesto:', error);
         mostrarMensaje('Hubo un error al actualizar el producto compuesto.', 'error');
     }
 }
+
+
