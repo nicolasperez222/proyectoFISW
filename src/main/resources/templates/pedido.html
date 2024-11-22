@@ -67,9 +67,7 @@
         <!-- Formulario para Producto Compuesto -->
         <form id="createProductFormCompuesto" class="formulario-producto">
             <h2>Producto Compuesto</h2>
-            <div class="form-row">
-                <button type="button" class="btn btn-search" onclick="buscarCompuesto()">Buscar Producto Compuesto</button>
-            </div><br>
+        
             <!-- Campos para el Producto Compuesto -->
             <div class="form-row">
                 <label for="nombreCompuesto">Nombre del Producto</label>
@@ -81,12 +79,6 @@
                 <input type="number" id="precioBase" name="precioBase" required>
             </div>
 
-            <div class="form-row">
-                <label for="categoriaCompuesto">Departamento</label>
-                <select id="categoriaCompuesto" name="categoriaCompuesto" required>
-                    <option value="">Seleccione un departamento</option>
-                </select>
-            </div>
             <br>
             <div id="subproductosContainer">
                 <h3>Subproductos</h3>
@@ -98,7 +90,7 @@
                 <div class="form-row">
                     <label for="buscarSubproducto">Buscar Subproducto</label>
                     <input type="text" id="buscarSubproducto" placeholder="Buscar por nombre..." oninput="buscarSubproductoPorNombre()">
-                    <ul id="resultadosBusqueda" style="display:none; list-style-type: none; padding: 0;"></ul>
+                    <ul id="resultadosBusquedaA" style="display:none; list-style-type: none; padding: 0;"></ul>
                 </div>
     
                 <div class="form-row">
