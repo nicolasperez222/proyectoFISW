@@ -165,8 +165,6 @@ async function buscarSubproductoPorNombre() {
             item.onclick = () => {
                 document.getElementById('buscarSubproducto').value = producto.nombre;
                 document.getElementById('buscarSubproducto').dataset.id = producto.id;
-                document.getElementById('nombreCompuesto').value = producto.nombre;
-                document.getElementById('nombreCompuesto').dataset.id = producto.id;
                 listaResultados.style.display = 'none'; 
             };
             listaResultados.appendChild(item);
@@ -288,8 +286,9 @@ async function buscarCompuestoPorNombre() {
             item.setAttribute('data-id', producto.id);
             item.style.cursor = 'pointer';
             item.onclick = () => {
-                document.getElementById('buscarCompuesto').value = producto.nombre;
-                document.getElementById('buscarCompuesto').dataset.id = producto.id;
+                document.getElementById('nombreC').innerText = producto.nombre;
+                document.getElementById('nombreC').dataset.id = producto.id;
+                document.getElementById('precioBaseC').value = producto.precioBase;
                 listaResultados.style.display = 'none';
                 document.getElementById('confirmacionCompuesto').style.display = 'block';
             };
@@ -397,10 +396,8 @@ function eliminarSubproducto(index) {
 
 function editarSubproducto(index) {
     const subproducto = subproductosSeleccionados[index];
-
     document.getElementById('formSubproducto').style.display = 'block';
     document.getElementById('buscarSubproducto').value = subproducto.nombre;
     document.getElementById('cantidadSubproducto').value = subproducto.cantidad;
-
     document.getElementById('formSubproducto').dataset.index = index;
 }
