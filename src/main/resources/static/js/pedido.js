@@ -394,10 +394,14 @@ function eliminarSubproducto(index) {
     actualizarListaSubproductos();
 }
 
-function editarSubproducto(index) {
+function editarSubproducto(index, event) {
+    if (event) event.preventDefault(); 
+
     const subproducto = subproductosSeleccionados[index];
     document.getElementById('formSubproducto').style.display = 'block';
     document.getElementById('buscarSubproducto').value = subproducto.nombre;
     document.getElementById('cantidadSubproducto').value = subproducto.cantidad;
     document.getElementById('formSubproducto').dataset.index = index;
 }
+
+
