@@ -353,3 +353,54 @@ async function crearProductoCompuesto() {
         mostrarMensaje('Error al conectar con el servidor.', 'error');
     }
 }
+
+function actualizarListaSubproductos() {
+    const listaSubproductos = document.getElementById('listaSubproductos');
+    listaSubproductos.innerHTML = ''; 
+
+    subproductosSeleccionados.forEach((subproducto, index) => {
+        const li = document.createElement('li');
+        li.className = 'subproducto-item';
+        li.dataset.index = index;
+
+        const texto = document.createElement('span');
+        texto.textContent = `${subproducto.nombre} - Cantidad: ${subproducto.cantidad}`;
+        texto.style.marginRight = '20px';
+
+        const btnContainer = document.createElement('div');
+        btnContainer.className = 'btn-container';
+
+        const btnEliminar = document.createElement('button');
+        btnEliminar.textContent = 'Eliminar';
+        btnEliminar.className = 'btn btn-danger btn-sm';
+        btnEliminar.onclick = () => eliminarSubproducto(index);
+
+        const btnEditar = document.createElement('button');
+        btnEditar.textContent = 'Editar';
+        btnEditar.className = 'btn btn-warning btn-sm';
+        btnEditar.onclick = () => editarSubproducto(index);
+
+        btnContainer.appendChild(btnEliminar);
+        btnContainer.appendChild(btnEditar);
+
+        li.appendChild(texto);
+        li.appendChild(btnContainer);
+
+        listaSubproductos.appendChild(li);
+    });
+}
+
+function eliminarSubproducto(index) {
+    subproductosSeleccionados.splice(index, 1);
+    actualizarListaSubproductos();
+}
+
+function editarSubproducto(index) {
+    const subproducto = subproductosSeleccionados[index];
+
+    document.getElementById('formSubproducto').style.display = 'block';
+    document.getElementById('buscarSubproducto').value = subproducto.nombre;
+    document.getElementById('cantidadSubproducto').value = subproducto.cantidad;
+
+    document.getElementById('formSubproducto').dataset.index = index;
+}
