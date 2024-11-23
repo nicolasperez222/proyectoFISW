@@ -732,7 +732,6 @@ function editarSubproducto(index) {
     document.getElementById('formSubproducto').style.display = 'block';
     document.getElementById('buscarSubproducto').value = subproducto.nombre;
     document.getElementById('cantidadSubproducto').value = subproducto.cantidad;
-
     document.getElementById('formSubproducto').dataset.index = index;
 }
 
