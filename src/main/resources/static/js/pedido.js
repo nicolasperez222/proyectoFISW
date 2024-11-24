@@ -377,7 +377,7 @@ function actualizarListaSubproductos() {
         const btnEditar = document.createElement('button');
         btnEditar.textContent = 'Editar';
         btnEditar.className = 'btn btn-warning btn-sm';
-        btnEditar.onclick = () => editarSubproducto(index);
+        btnEditar.onclick = (event) => editarSubproducto(index, event);
 
         btnContainer.appendChild(btnEliminar);
         btnContainer.appendChild(btnEditar);
@@ -388,6 +388,7 @@ function actualizarListaSubproductos() {
         listaSubproductos.appendChild(li);
     });
 }
+
 
 function eliminarSubproducto(index) {
     subproductosSeleccionados.splice(index, 1);
