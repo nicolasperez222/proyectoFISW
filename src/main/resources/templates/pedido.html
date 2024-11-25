@@ -12,11 +12,12 @@
         <h1>Gestión de Pedidos</h1>
         <form id="pedidoForm">
             <label for="mesa">Mesa:</label>
-            <input type="number" id="mesa" required placeholder="Número de mesa">
+            <input type="number" min="1" id="mesa" required placeholder="Número de mesa">
 
             <label for="fecha">Fecha y hora:</label>
             <input type="datetime-local" id="fecha" required>
-
+         
+            
             <div class="form-row">
                 <label for="buscarSimple">Buscar Producto Simple</label>
                 <input type="text" id="buscarSimple" placeholder="Buscar por nombre..." oninput="buscarSimplePorNombre()">
@@ -67,13 +68,16 @@
         <!-- Formulario para Producto Compuesto -->
         <form id="createProductFormCompuesto" class="formulario-producto">
             <h2>Producto Compuesto</h2>
-            <!-- Campos para el Producto Compuesto -->
+
             <h3 id="nombreC"></h3>
             <div class="form-row">
-                <label for="precioBaseC">Precio Base</label>
+                <label for="precioBaseC">Precio de Venta</label>
                 <input type="number" id="precioBaseC" name="precioBaseC" required>
             </div>
-
+            <div class="form-row">
+                <label for="cantidadC">Cantidad</label>
+                <input type="number" id="cantidadC" min="1" value="1">
+            </div>
             <br>
             <div id="subproductosContainer">
                 <h3>Subproductos</h3>
@@ -99,18 +103,24 @@
                 </div>
                 <br>
             </div>
-            <!-- Botón para Agregar Subproducto -->
+         
             <div class="form-row">
                 <button type="button" class="btn btn-primary" onclick="mostrarFormularioSubproducto()">Agregar Subproducto</button>
             </div>
             <br>
             <div class="form-actions">
-                <button class="btn btn-primary" type="button" onclick="crearProductoCompuesto()">Crear Producto Compuesto</button>
-                <!-- Botones para Actualizar y Cancelar -->
+                <button class="btn btn-primary" type="button" onclick="crearProductoCompuesto()">Agregar Producto al Pedido</button>
+      
                 <button type="button" class="btn btn-warning" id="actualizarCompuesto" onclick="actualizarProductoCompuesto()" style="display:none;">Actualizar Producto</button>
-                <button type="button" class="btn btn-danger" id="cancelarEdicionCompuesto" onclick="cancelarEdicion()" style="display:none;">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="cancelarEdicionCompuesto" onclick="cancelarCompuesto()">Cancelar</button>
             </div>
         </form>
+        
+        <p id="responseMessage" style="display:none;"></p>
+    </div>
+    <div class="container">
+        <button class="btn btn-primary" type="button" style="display: block; margin: 0 auto; width: 80%;" onclick="crearPedido()">Crear Pedido</button>
+
     </div>
 
     <script src="/js/pedido.js"></script>

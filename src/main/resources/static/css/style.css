@@ -283,6 +283,14 @@ tbody tr:hover {
     border-bottom: 1px solid #ddd; 
 }
 
+.productoC-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd; 
+}
+
 .btn-container {
     display: flex;
     gap: 10px;
@@ -293,7 +301,6 @@ tbody tr:hover {
 }
 
 /* Tabla en los modales */
-/* Contenedor de la tabla con scroll vertical dentro de los modales */
 .modal .table-container {
     margin-top: 20px;
     overflow-y: auto;
@@ -301,7 +308,6 @@ tbody tr:hover {
     width: 100%;
 }
 
-/* Tabla en los modales */
 #modalBuscarProducto table, #modalBuscarProductoCompuesto table {
     width: 100%; 
     border-collapse: collapse;

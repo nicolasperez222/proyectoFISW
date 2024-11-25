@@ -18,7 +18,7 @@ public class PedidoController {
     private PedidoRepository pedidoRepository;
 
     // Crear un nuevo pedido
-    @PostMapping("/")
+    @PostMapping("/crear")
     public ResponseEntity<Pedido> crearPedido(@RequestBody Pedido pedido) {
         Pedido nuevoPedido = pedidoRepository.save(pedido);
         return new ResponseEntity<>(nuevoPedido, HttpStatus.CREATED);
