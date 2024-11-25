@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.fisw.proyecto.modelo.PedidoProductoCompuesto;
 
 @Repository
-public interface PedidoCompuestoRepository extends JpaRepository<PedidoProductoCompuesto, Integer>{
+public interface PedidoProductoCompuestoRepository extends JpaRepository<PedidoProductoCompuesto, Integer>{
 
 }
