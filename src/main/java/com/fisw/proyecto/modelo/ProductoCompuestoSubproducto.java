@@ -1,9 +1,10 @@
 package com.fisw.proyecto.modelo;
 
-import com.fasterxml.jackson.annotation.JsonBackReference; // Agregar para evitar la recursión
+import com.fasterxml.jackson.annotation.JsonBackReference; 
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 
 @Entity
 @Data
@@ -15,6 +16,7 @@ public class ProductoCompuestoSubproducto {
 
     @ManyToOne
     @JsonBackReference
+    @ToString.Exclude
     private ProductoCompuesto productoCompuesto;
 
     @ManyToOne

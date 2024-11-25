@@ -2,6 +2,8 @@ package com.fisw.proyecto.modelo;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
+
 import java.util.ArrayList;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -22,9 +24,11 @@ public class ProductoCompuesto {
 
     @ManyToOne
     @JoinColumn(name = "pedido_id")
+    @ToString.Exclude
     private Pedido pedido;
 
     @OneToMany(mappedBy = "productoCompuesto", cascade = CascadeType.ALL)
     @JsonManagedReference
+    @ToString.Exclude
     private List<ProductoCompuestoSubproducto> subproductos = new ArrayList<>();
 }

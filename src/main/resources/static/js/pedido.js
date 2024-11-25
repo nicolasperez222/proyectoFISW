@@ -71,9 +71,10 @@ async function confirmarSimple() {
     }
 
     const subproducto = {
+        id: parseInt(idSubproducto, 10),
         nombre: nombreSubproducto,
-        cantidad: cantidadSubproducto,
-        id: parseInt(idSubproducto, 10)
+        cantidad: cantidadSubproducto
+        
     };
 
     const indexExistente = subproductosSeleccionadosSimple.findIndex(sub => sub.nombre === subproducto.nombre);
@@ -581,7 +582,8 @@ async function crearPedido() {
             cantidad: compuesto.cantidad
         }))
     };
-    console.log(pedido);
+    console.log(JSON.stringify(pedido, null, 2));
+
 
     try {
         const response = await fetch('/pedido/crear', {

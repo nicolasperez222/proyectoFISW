@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,9 +20,25 @@ public class PedidoController {
 
     // Crear un nuevo pedido
     @PostMapping("/crear")
-    public ResponseEntity<Pedido> crearPedido(@RequestBody Pedido pedido) {
-        Pedido nuevoPedido = pedidoRepository.save(pedido);
-        return new ResponseEntity<>(nuevoPedido, HttpStatus.CREATED);
+    public ResponseEntity<String> crearPedido(@RequestBody Pedido pedido) {
+        try {
+            System.out.println("Pedido recibido: " + pedido);
+           
+            // Asociar el pedido a cada producto
+            if (pedido.getProductos() != null) {
+                pedido.getProductos().forEach(pp -> pp.setPedido(pedido));
+            }
+            // Asociar el pedido a cada producto compuesto
+            if (pedido.getProductosCompuestos() != null) {
+                pedido.getProductosCompuestos().forEach(ppc -> ppc.setPedido(pedido));
+            }
+
+            pedidoRepository.save(pedido);
+            return ResponseEntity.ok("Pedido creado con éxito");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al crear el pedido");
+        }
     }
 
     // Obtener todos los pedidos
