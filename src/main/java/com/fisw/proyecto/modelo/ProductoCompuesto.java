@@ -31,7 +31,6 @@ public class ProductoCompuesto {
 
     @OneToMany(mappedBy = "productoCompuesto")
     @ToString.Exclude
-    @JsonManagedReference
     private List<PedidoProductoCompuesto> pedidosProductosCompuestos = new ArrayList<>();
 
 }
