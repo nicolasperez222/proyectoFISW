@@ -6,6 +6,7 @@ import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
@@ -22,13 +23,15 @@ public class ProductoCompuesto {
     @ManyToOne
     private Categoria categoria;
 
-    @ManyToOne
-    @JoinColumn(name = "pedido_id")
-    @ToString.Exclude
-    private Pedido pedido;
 
     @OneToMany(mappedBy = "productoCompuesto", cascade = CascadeType.ALL)
     @JsonManagedReference
     @ToString.Exclude
     private List<ProductoCompuestoSubproducto> subproductos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "productoCompuesto")
+    @ToString.Exclude
+    @JsonManagedReference
+    private List<PedidoProductoCompuesto> pedidosProductosCompuestos = new ArrayList<>();
+
 }
