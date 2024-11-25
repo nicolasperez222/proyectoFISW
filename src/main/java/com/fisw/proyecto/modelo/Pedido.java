@@ -24,7 +24,7 @@ public class Pedido {
     @JsonManagedReference
     private List<PedidoProducto> productos;
     
-    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<PedidoProductoCompuesto> productosCompuestos;
     
