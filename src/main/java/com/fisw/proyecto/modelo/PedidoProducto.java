@@ -2,6 +2,8 @@ package com.fisw.proyecto.modelo;
 
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -15,12 +17,12 @@ public class PedidoProducto {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pedido_id", nullable = false)
+    @JsonIgnore
     private Pedido pedido;
 
     @ManyToOne
     @JoinColumn(name = "producto_id")
     private Producto producto;
-
 
     private int cantidad;
 

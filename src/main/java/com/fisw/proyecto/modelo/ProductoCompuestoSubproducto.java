@@ -23,4 +23,14 @@ public class ProductoCompuestoSubproducto {
     private Producto subproducto;
 
     private int cantidad;
+    public ProductoCompuestoSubproducto() {
+    
+    }
+    public ProductoCompuestoSubproducto(ProductoCompuesto productoCompuesto, Producto subproducto, int cantidad) {
+        this.productoCompuesto = productoCompuesto;
+        this.subproducto = subproducto;
+        this.cantidad = cantidad;
+    }
+
+    
 }

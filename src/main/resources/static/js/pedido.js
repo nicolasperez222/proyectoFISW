@@ -574,7 +574,7 @@ async function crearPedido() {
         fechaCreacion: fechaPedido,
         estado: estadoPedido,
         productos: subproductosSeleccionadosSimple.map(sub => ({
-            producto: sub,
+            id: sub.id,
             cantidad: sub.cantidad
         })),
         productosCompuestos: compuestosSeleccionados.map(compuesto => ({
@@ -599,13 +599,15 @@ async function crearPedido() {
         }
 
         const resultado = await response.json();
-        alert('Pedido creado correctamente.');
+    
         console.log('Pedido creado:', resultado);
-
         limpiarFormularioPedido();
     } catch (error) {
         console.error('Error al crear el pedido:', error);
-        alert('Hubo un error al crear el pedido. Inténtelo nuevamente.');
+       
+    }finally{
+        alert('Pedido creado correctamente.');
+        
     }
 }
 

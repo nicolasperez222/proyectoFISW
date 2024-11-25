@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 
 @Entity
@@ -26,9 +27,12 @@ public class Producto {
 
     @OneToMany(mappedBy = "subproducto")
     @JsonIgnore
+    @JsonManagedReference
     private List<ProductoCompuestoSubproducto> productosCompuestos = new ArrayList<>();
 
     @OneToMany(mappedBy = "producto", fetch = FetchType.LAZY)
+    @JsonIgnore
+    @JsonManagedReference
     private List<PedidoProducto> productos = new ArrayList<>();
 }
 

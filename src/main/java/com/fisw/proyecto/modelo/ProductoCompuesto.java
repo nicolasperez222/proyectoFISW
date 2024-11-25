@@ -7,6 +7,7 @@ import lombok.ToString;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
@@ -31,6 +32,20 @@ public class ProductoCompuesto {
 
     @OneToMany(mappedBy = "productoCompuesto")
     @ToString.Exclude
+    @JsonIgnoreProperties({"pedidosProductosCompuestos"})
     private List<PedidoProductoCompuesto> pedidosProductosCompuestos = new ArrayList<>();
 
+
+
+    // Método para agregar un subproducto
+    public void addSubproducto(ProductoCompuestoSubproducto subproducto) {
+        subproducto.setProductoCompuesto(this);
+        this.subproductos.add(subproducto);
+    }
+
+    // Método para eliminar un subproducto
+    public void removeSubproducto(ProductoCompuestoSubproducto subproducto) {
+        subproducto.setProductoCompuesto(null);
+        this.subproductos.remove(subproducto);
+    }
 }
