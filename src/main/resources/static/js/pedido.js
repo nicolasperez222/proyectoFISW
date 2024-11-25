@@ -573,21 +573,15 @@ async function crearPedido() {
         fechaCreacion: fechaPedido,
         estado: estadoPedido,
         productos: subproductosSeleccionadosSimple.map(sub => ({
-            id: sub.id,
-            tipo: 'simple',
+            producto: sub,
             cantidad: sub.cantidad
         })),
         productosCompuestos: compuestosSeleccionados.map(compuesto => ({
-            id: compuesto.id,
-            nombre: compuesto.nombre,
-            cantidad: compuesto.cantidad,
-            precioBase: compuesto.precioBase,
-            subproductos: compuesto.subproductos.map(sub => ({
-                id: sub.subproducto.id,
-                cantidad: sub.cantidad
-            }))
+            productoCompuesto: compuesto,
+            cantidad: compuesto.cantidad
         }))
     };
+    console.log(pedido);
 
     try {
         const response = await fetch('/pedido/crear', {

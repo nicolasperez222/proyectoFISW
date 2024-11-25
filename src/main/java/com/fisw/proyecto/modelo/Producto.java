@@ -4,8 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import java.util.ArrayList;
 import java.util.List;
-import com.fasterxml.jackson.annotation.JsonIgnore; // Agregar para evitar recursión en Producto
-
+import com.fasterxml.jackson.annotation.JsonIgnore; 
 @Entity
 @Data
 public class Producto {

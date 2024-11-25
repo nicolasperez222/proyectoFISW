@@ -23,16 +23,29 @@ public class Pedido {
     private Date fechaCreacion;
 
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PedidoProductoCompuesto> pedidoProductoCompuestos = new ArrayList<>();
+    private List<PedidoProductoCompuesto> productosCompuestos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PedidoProducto> productos = new ArrayList<>();
+
 
     public void addPedidoProductoCompuesto(PedidoProductoCompuesto ppc) {
         ppc.setPedido(this); 
-        this.pedidoProductoCompuestos.add(ppc);
+        this.productosCompuestos.add(ppc);
     }
 
     public void removePedidoProductoCompuesto(PedidoProductoCompuesto ppc) {
         ppc.setPedido(null); 
-        this.pedidoProductoCompuestos.remove(ppc);
+        this.productosCompuestos.remove(ppc);
+    }
+    public void addPedidoProducto(PedidoProducto pp) {
+        pp.setPedido(this); 
+        this.productos.add(pp);
+    }
+
+    public void removePedidoProducto(PedidoProducto pp) {
+        pp.setPedido(null); 
+        this.productos.remove(pp);
     }
 }
 
