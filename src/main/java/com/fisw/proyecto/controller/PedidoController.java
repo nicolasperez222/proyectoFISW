@@ -106,7 +106,7 @@ public class PedidoController {
         }
     }
 
-
+    
     // Obtener todos los pedidos
     @GetMapping("/")
     public ResponseEntity<List<Pedido>> obtenerTodosLosPedidos() {
