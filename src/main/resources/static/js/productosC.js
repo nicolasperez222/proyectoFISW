@@ -11,8 +11,7 @@ async function cargarDepartamentos() {
         
         const departamentoSimpleSelect = document.getElementById('categoriaSimple');
         const departamentoSimpleSelectC = document.getElementById('categoriaCompuesto');
-        
-        // Limpiar las opciones existentes
+    
         departamentoSimpleSelect.innerHTML = '';
         departamentoSimpleSelectC.innerHTML = '';
       
@@ -558,14 +557,12 @@ async function filtrarProductosCompuesto() {
     const filtro = document.getElementById('filtroProductoC').value.trim(); 
     const tbody = document.querySelector('#tablaProductosC tbody');
 
-    // Validar filtro vacío
     if (!filtro) {
         console.warn('El campo de filtro está vacío.');
         mostrarMensaje('Por favor ingrese un término de búsqueda.', 'error');
         return;
     }
 
-    // Mostrar indicador de carga
     tbody.innerHTML = '<tr><td colspan="5">Cargando...</td></tr>';
 
     try {

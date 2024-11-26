@@ -135,9 +135,9 @@ button:hover, .btn:hover {
 /* Contenedor de la tabla con scroll horizontal */
 .table-container {
     margin-top: 30px;
-    overflow-x: auto; /* Permitir desplazamiento horizontal */
-    max-width: 100%;  /* Ajustarse al ancho de la pantalla */
-    white-space: nowrap; /* Prevenir que el contenido se divida en múltiples líneas */
+    overflow-x: auto; 
+    max-width: 100%; 
+    white-space: nowrap;
 }
 
 /* Tabla */

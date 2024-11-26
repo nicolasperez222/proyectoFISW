@@ -2,10 +2,8 @@ window.onload = function() {
     cargarCategorias();
 };
 
-// Variables para manejar el estado de la categoría a editar
 let categoriaEditadaId = null;
 
-// Creación o actualización de categoría
 document.getElementById("createCategoryForm").addEventListener("submit", async function(event) {
     event.preventDefault();
 

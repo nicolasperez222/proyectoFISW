@@ -50,7 +50,7 @@ public class CategoriaController {
         if (!categoriaRepository.existsById(id)) {
             throw new RuntimeException("Categoría no encontrada");
         }
-        categoria.setId(id); // Asegura que se actualice la categoría con el ID correcto
+        categoria.setId(id);
         return categoriaRepository.save(categoria);
     }
 }
