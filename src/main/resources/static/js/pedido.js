@@ -607,6 +607,7 @@ async function crearPedido() {
        
     }finally{
         alert('Pedido creado correctamente.');
+        limpiarFormularioPedido
         
     }
 }
@@ -618,4 +619,5 @@ function limpiarFormularioPedido() {
     compuestosSeleccionados = [];
     actualizarListaSimple();
     actualizarListaCompuesto();
+    document.getElementById('mesa').focus();
 }

@@ -35,14 +35,14 @@ public class PedidoController {
     @PostMapping("/crear")
     public ResponseEntity<String> crearPedido(@RequestBody Map<String, Object> pedidoData) {
         try {
-            // Crear el objeto Pedido
+           
             System.out.print(pedidoData);
             Pedido pedido = new Pedido();
             pedido.setNumeroMesa((Integer) pedidoData.get("numeroMesa"));
             pedido.setFechaCreacion(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm").parse((String) pedidoData.get("fechaCreacion")));
             pedido.setEstado((String) pedidoData.get("estado"));
 
-            // Construir lista de productos
+
             List<Map<String, Object>> productos = (List<Map<String, Object>>) pedidoData.get("productos");
             if (productos != null) {
                 for (Map<String, Object> prodData : productos) {
@@ -57,11 +57,10 @@ public class PedidoController {
                 }
             }
 
-            // Construir lista de productos compuestos
             List<Map<String, Object>> productosCompuestos = (List<Map<String, Object>>) pedidoData.get("productosCompuestos");
             if (productosCompuestos != null) {
                 for (Map<String, Object> compData : productosCompuestos) {
-                    // Extraer el objeto productoCompuesto
+        
                     Map<String, Object> productoCompuestoData = (Map<String, Object>) compData.get("productoCompuesto");
                     if (productoCompuestoData == null || productoCompuestoData.get("id") == null) {
                         throw new RuntimeException("Faltan datos del producto compuesto.");
@@ -70,13 +69,10 @@ public class PedidoController {
                     Integer idCompuesto = (Integer) productoCompuestoData.get("id");
                     Integer cantidadCompuesto = (Integer) compData.get("cantidad");
 
-                    // Buscar el producto compuesto en la base de datos
                     ProductoCompuesto productoCompuesto = productoCompuestoRepository.findById(idCompuesto)
                             .orElseThrow(() -> new RuntimeException("Producto compuesto no encontrado: " + idCompuesto));
 
                     PedidoProductoCompuesto pedidoProductoCompuesto = new PedidoProductoCompuesto(pedido, productoCompuesto, cantidadCompuesto);
-
-                    // Procesar subproductos dentro del producto compuesto
                     List<Map<String, Object>> subproductos = (List<Map<String, Object>>) productoCompuestoData.get("subproductos");
                     if (subproductos != null) {
                         for (Map<String, Object> subData : subproductos) {
